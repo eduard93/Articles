@@ -340,7 +340,7 @@ XData html
 
 1. [Установить GitLab runner](https://docs.gitlab.com/runner/).
 2. [Зарегистрировать](https://docs.gitlab.com/runner/register/index.html) GitLab runner в GitLab.
-3. Разрешить юзеру `gitlab-runner` вызывать InterSystems IRIS.
+3. Разрешить пользователю `gitlab-runner` вызывать InterSystems IRIS.
 
 Важное замечание по установке GitLab runner - НЕ клонируйте сервер после установки GitLab runner. Результаты непредсказуемы и нежелательны.
 Поподробнее о шагах 2, 3.
@@ -351,7 +351,7 @@ XData html
 
 Будет предложено несколько опций на выбор, и хотя большинство шагов довольно просто, некоторые из них стоит прокомментировать:
 
-**Please enter the gitlab-ci token for this runner**
+- Please enter the gitlab-ci token for this runner
 
 Доступно несколько токенов:
 
@@ -360,10 +360,20 @@ XData html
 
 Когда вы подключаете runner для CD конкретного проекта, нужно указать токен именно этого проекта.
 
-**Please enter the gitlab-ci tags for this runner (comma separated)**
+- Please enter the gitlab-ci tags for this runner (comma separated)
 
 В  CD конфигурации можно фильтровать, какие скрипты выполняются окружениях с определёнными тегами. Поэтому в самом простом случае укажите один тег, который будет названием окружения.
 
-**Please enter the executor: ssh, docker+machine, docker-ssh+machine, kubernetes, docker, parallels, virtualbox, docker-ssh, shell:**
+- Please enter the executor: ssh, docker+machine, docker-ssh+machine, kubernetes, docker, parallels, virtualbox, docker-ssh, shell
 
 Вне зависимости от того используете ли вы docker, выбирайте shell для запуска скриптов.
+
+#### Разрешить пользователю `gitlab-runner` вызывать InterSystems IRIS.
+
+После подключения к GitLab нужно разрешить юзеру `gitlab-runner` вызывать InterSystems IRIS. Для этого:
+
+1. Пользователь `gitlab-runner` должен иметь права для вызова `irissession` либо `csession`. Для этого его нужно добавить в группу `irisusr` либо `cacheusr` командой: `usermod -a -G cacheusr gitlab-runner`
+2. В InterSystems IRIS [создайте пользователя](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSQL_privileges) `gitlab-runner` и предоставьте ему права для выполнения скриптов CD (запись в бд и т.д.)
+3. [Включите ОС аутентификацию](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GCAS_intro_authe_os).
+
+Вместо пунктов 2 и 3 можно использовать другие подходы, например передачу пользователя/пароля, но вариант с ОС аутентификацией представляется мне более предпочтительным.
