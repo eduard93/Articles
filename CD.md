@@ -750,6 +750,7 @@ load preprod:
 
 ## Ссылки
 
+- [Серия статей на Developer Community про CD](https://community.intersystems.com/post/continuous-delivery-your-intersystems-solution-using-gitlab-part-vi-containers-infrastructure)
 - [Тестовый репозиторий](http://gitlab.eduard.win/test/testProject)
 - [Репозиторий с хуками GitLab](https://github.com/intersystems-ru/GitLab)
 - [GitLab Workflow](https://about.gitlab.com/2016/10/25/gitlab-workflow-an-overview/)
