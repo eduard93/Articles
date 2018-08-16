@@ -216,11 +216,11 @@ gitlab_rails ['registry_api_url'] = "https://docker.domain.com"
 
 ### GitLab.xml
 
-Содержит код хуков для CD. Он был разработан в [предыдущей статье](https://habr.com/company/intersystems/blog/354158/) и доступен на [GitHub](https://github.com/intersystems-ru/GitLab). Это небольшая библиотека для загрузки кода, запуска различных хуков и тестового кода. Предпочтительней использовать подмодули git, чтобы включить этот проект или что-то подобное в ваш репозиторий. Подмодули лучше, потому что легче поддерживать их в актуальном состоянии. Еще одна альтернатива - создать релиз на GitLab и загрузить его с помощью команды ADD уже при сборке.
+Содержит код коллбэков для CD. Он был разработан в [предыдущей статье](https://habr.com/company/intersystems/blog/354158/) и доступен на [GitHub](https://github.com/intersystems-ru/GitLab). Это небольшая библиотека для загрузки кода, запуска различных коллбэков и тестового кода. Предпочтительней использовать подмодули git, чтобы включить этот проект или что-то подобное в ваш репозиторий. Подмодули лучше, потому что легче поддерживать их в актуальном состоянии. Еще одна альтернатива - создать релиз на GitLab и загрузить его с помощью команды ADD уже при сборке.
 
 ### iris.key
 
-Лицензионный ключ. Он может быть загружен во время сборки контейнера, а не храниться на сервере. Небезопасно хранить ключ в репозитории.
+Лицензионный ключ. Он может быть загружен во время сборки контейнера, а не храниться на сервере. Небезопасно хранить ключ в репозитории. Вы можете получить пробный ключ [на WRC](https://wrc.intersystems.com/wrc/) или попробовать [InterSystems IRIS Experience](https://www.intersystems.com/learn-play/).
 
 ### pwd.txt
 
@@ -229,9 +229,9 @@ gitlab_rails ['registry_api_url'] = "https://docker.domain.com"
 ### load_ci.script
 
 Скрипт, который:
-- Включает ОС авторизацию в InterSystems IRIS
+- Включает [ОС аутентификацию](https://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GCAS_intro#GCAS_intro_authe_os) в InterSystems IRIS
 - Загружает GitLab.xml
-- Инициализирует настройки GitLab хуков
+- Инициализирует настройки GitLab коллбэков
 - Загружает код
 
 
@@ -240,7 +240,7 @@ gitlab_rails ['registry_api_url'] = "https://docker.domain.com"
 set sc = ##Class(Security.System).Get("SYSTEM",.Properties)
 write:('sc) $System.Status.GetErrorText(sc)
 set AutheEnabled = Properties("AutheEnabled")
-set AutheEnabled = $zb(+AutheEnabled,16,7)
+set AutheEnabled = $ZBOOLEAN(+AutheEnabled,16,7)
 set Properties("AutheEnabled") = AutheEnabled
 set sc = ##Class(Security.System).Modify("SYSTEM",.Properties)
 write:('sc) $System.Status.GetErrorText(sc)
@@ -287,7 +287,7 @@ build image:
 Docker Image создаётся с помощью [Dockerfile](https://docs.docker.com/engine/reference/builder/), вот он:
 
 ```
-FROM docker.intersystems.com/intersystems/iris:2018.1.1.611.0
+FROM docker.intersystems.com/intersystems/iris:2018.1.1.613.0
 
 ENV SRC_DIR=/tmp/src
 ENV CI_DIR=$SRC_DIR/ci
@@ -304,11 +304,12 @@ RUN cp $CI_DIR/iris.key $ISC_PACKAGE_INSTALLDIR/mgr/ \
 ```
 
 Выполняются следующие действия:
-- За основу берём контейнер InterSystems IRIS.
+- За основу берём образ InterSystems IRIS. Он должен быть в вашем Docker Registry. Если вы раньше не работали с Docker, попробуйте [First Look: Docker](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=AFL_containers), где описывается получение образа InterSystems IRIS, его добавление в Docker Registry и ручной запуск.
 - Прежде всего, копируем наш репозиторий (и «секретный» каталог) внутрь контейнера.
 - Копируем лицензионный ключ и `GitLab.xml` в каталог `mgr`.
 - Меняем пароль на значение из `pwd.txt`. Обратите внимание, что `pwd.txt` удаляется при этой операции.
-- Запускается InterSystems IRIS и выполняется `load_ci.script`.
+- Запускается InterSystems IRIS.
+- Выполняется `load_ci.script`.
 - InterSystems IRIS останавливается.
 
 Вот частичный лог сборки:
@@ -334,7 +335,7 @@ $ cd ..
 $ docker build --build-arg CI_PROJECT_DIR=$CI_PROJECT_DIR -t docker.eduard.win/test/docker:$CI_COMMIT_REF_NAME .
 Sending build context to Docker daemon  401.4kB
 
-Step 1/6 : FROM docker.intersystems.com/intersystems/iris:2018.1.1.611.0
+Step 1/6 : FROM docker.intersystems.com/intersystems/iris:2018.1.1.613.0
  ---> cd2e53e7f850
 Step 2/6 : ENV SRC_DIR=/tmp/src
  ---> Using cache
