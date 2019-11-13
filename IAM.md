@@ -14,7 +14,7 @@
 
 Если вы уже используете InterSystems IRIS, вы можете добавить к вашей лицензии опцию IAM. Опция IAM бесплатна для заказчиков InterSystems IRIS, но для начала использования IAM необходимо запросить в InterSystems новый лицензионый ключ.
 
-Если вы только планируете попробовать InterSystems IRIS обратитесь в InterSystems.
+Если вы еще не используете InterSystems IRIS и только планируете попробовать InterSystems API Manager, обратитесь в InterSystems.
 
 # Начало работы и установка
 
