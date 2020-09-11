@@ -56,7 +56,9 @@ COPY --from=builder /tmp/app/jar/*.jar $GWDIR/
 ```dockerfile
 FROM openjdk:8 AS builder
 ```
-Our starting image is JDK 8.
+
+JDK8 это базовый образ, в котором мы будем компилировать наше приложение. 
+
 ```dockerfile
 ARG APP_HOME=/tmp/app
 COPY src $APP_HOME/src
@@ -209,9 +211,8 @@ docker-compose up -d
 
 # Выводы
 
-- Создавайте любые элементы продукции на Java/.Net
-- Вызывайте код на Java/.Net из ObjectScript
-- Вызывайте код на ObjectScript из Java/.Net
+- В интеграционных продукциях InterSystems IRIS появилась возможность создавать любые элементы продукции на языках Java/.Net
+- Код на Java/.Net возможно вызывать из InterSystems ObjectScript и наоборот, код на InterSystems ObjectScript из Java/.Net
 - Генерация прокси классов больше не требуется
 - Возможна как классическая поставка решения, так и поставка в Docker
 
