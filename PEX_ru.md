@@ -194,7 +194,7 @@ CMD dotnet IRISGatewayCore21.dll $PORT 0.0.0.0
 
 Готово!
 
-Вот полная конфигурация [docker-compose](github.com/intersystems-community/pex-demo/blob/master/docker-compose.yml), для запуска демо целиком (в том числе и UI для Apache Kafka, для просмотра сообщений).
+Вот полная конфигурация [docker-compose](https://github.com/intersystems-community/pex-demo/blob/master/docker-compose.yml), для запуска демо целиком (в том числе и UI для Apache Kafka, для просмотра сообщений).
 
 # Запуск демо
 
