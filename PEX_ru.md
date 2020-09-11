@@ -1,3 +1,5 @@
+# Шлюзы Java/.Net в интеграционных продукциях InterSystems IRIS
+
 Шлюзы в InterSystems IRIS это механизм взаимодействия между ядром InterSystems IRIS и прикладным кодом на языках Java/.Net. С помощью шлюзов вы можете работать как с объектами Java/.NET из ObjectScript так и с объектами ObjectScript и глобалами из Java/.NET. Шлюзы могут быть запущены где угодно - локально, на удаленном сервере, в докере. 
 
 В этой статье я покажу, как можно легко разработать и контейнеризовать интеграционную продукцию с .Net/Java кодом. А для взаимодействия с кодом на языках Java/.Net будем использовать [PEX](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=EPEX), предоставляющий возможность реализовать любой элемент интеграционной продукции на языках Java/.Net.
@@ -24,7 +26,7 @@
 
 Вот наш [докер-файл](https://github.com/intersystems-community/pex-demo/blob/master/java/Dockerfile):
 
-```
+```dockerfile
 FROM openjdk:8 AS builder
 
 ARG APP_HOME=/tmp/app
@@ -51,23 +53,23 @@ COPY --from=builder /tmp/app/jar/*.jar $GWDIR/
 
 Посмотрим, что здесь происходит (я предполагаю, что вы знакомы с [многоступенчатыми докер сборками](https://docs.docker.com/develop/develop-images/multistage-build/)):
 
-```
+```dockerfile
 FROM openjdk:8 AS builder
 ```
 Our starting image is JDK 8.
-```
+```dockerfile
 ARG APP_HOME=/tmp/app
 COPY src $APP_HOME/src
 ```
 
 Копируем исходный код из папки `/src` в `/tmp/app`.
 
-```
+```dockerfile
 COPY --from=intersystemscommunity/jgw:latest /jgw/*.jar $APP_HOME/jgw/
 ```
 Копируем библиотеки Java Gateway в папку `/tmp/app/jgw`.
 
-```
+```dockerfile
 WORKDIR $APP_HOME/jar/
 ADD https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/2.5.0/kafka-clients-2.5.0.jar .
 ADD https://repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar .
@@ -82,7 +84,7 @@ RUN javac -classpath $APP_HOME/jar/*:$APP_HOME/jgw/* dc/rmq/KafkaOperation.java 
 
 Все зависимости скачаны - вызываем `javac/jar` для компиляции jar файла. Для реальных проектов рекомендуется использовать полноценную систему сборки maven или gradle.
 
-```
+```dockerfile
 FROM intersystemscommunity/jgw:latest
 
 COPY --from=builder /tmp/app/jar/*.jar $GWDIR/
@@ -105,7 +107,7 @@ COPY --from=builder /tmp/app/jar/*.jar $GWDIR/
 
 Вот наш [докер-файл](https://github.com/intersystems-community/pex-demo/blob/master/net/Dockerfile):
 
-```
+```dockerfile
 FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build
 
 ENV ISC_PACKAGE_INSTALLDIR /usr/irissys
@@ -138,11 +140,11 @@ CMD dotnet IRISGatewayCore21.dll $PORT 0.0.0.0
 ```
 
 Посмотрим, что здесь происходит:
-```
+```dockerfile
 FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build
 ```
 Используем образ .Net Core 2.1 SDK для сборки нашего приложения.
-```
+```dockerfile
 ENV ISC_PACKAGE_INSTALLDIR /usr/irissys
 ENV GWLIBDIR lib
 ENV ISC_LIBDIR ${ISC_PACKAGE_INSTALLDIR}/dev/dotnet/bin/Core21
@@ -152,7 +154,7 @@ COPY --from=store/intersystems/iris-community:2020.2.0.211.0 $ISC_LIBDIR/*.nupkg
 ```
 Копируем библиотеки .Net Gateway из официального образа InterSystems IRIS:
 
-```
+```dockerfile
 # copy csproj and restore as distinct layers
 COPY *.csproj ./
 RUN dotnet restore
@@ -163,20 +165,20 @@ RUN dotnet publish -c release -o /app
 ```
 Компилируем нашу бизнес-операцию.
 
-```
+```dockerfile
 FROM mcr.microsoft.com/dotnet/core/runtime:2.1
 WORKDIR /app
 COPY --from=build /app ./
 ```
 Копируем библиотеки в финальный контейнер.
 
-```
+```dockerfile
 RUN cp KafkaConsumer.runtimeconfig.json IRISGatewayCore21.runtimeconfig.json && \
     cp KafkaConsumer.deps.json IRISGatewayCore21.deps.json
 ```
 В настоящее время шлюз .Net должен загружать все зависимости при запуске, поэтому мы информируем его обо всех возможных зависимостях.
 
-```
+```dockerfile
 ENV PORT 55556
 
 CMD dotnet IRISGatewayCore21.dll $PORT 0.0.0.0
