@@ -4,7 +4,7 @@
 
 - Configuration Merge File
 - Actions
-- Пример: Шард-кластер
+- Пример: Шард—кластер
 - Выводы
 
 # Configuration Merge File
