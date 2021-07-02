@@ -96,7 +96,7 @@ ActivateCPF
 version: '3.7'
 services:
   iris1:
-    image: containers.intersystems.com/intersystems/iris:2020.3.0.221.0
+    image: containers.intersystems.com/intersystems/iris:2021.1.0.215.0
     init: true
     command: --key /ISC/iris.key
     hostname: iris1
@@ -110,7 +110,7 @@ services:
       - 9012:52773
 
   iris2:
-    image: containers.intersystems.com/intersystems/iris:2020.3.0.221.0
+    image: containers.intersystems.com/intersystems/iris:2021.1.0.215.0
     command: --key /ISC/iris.key --before 'sleep 60'
     init: true
     hostname: iris2
@@ -126,7 +126,7 @@ services:
       - 9022:52773
 
   iris3:
-    image: containers.intersystems.com/intersystems/iris:2020.3.0.221.0
+    image: containers.intersystems.com/intersystems/iris:2021.1.0.215.0
     command: --key /ISC/iris.key --before 'sleep 60'
     init: true
     hostname: iris3
@@ -142,7 +142,7 @@ services:
       - 9032:52773
 ```
 
-Мы запускаем стандартный образ `intersystems/iris:2020.3.0.221.0` с лицензионным ключом с поддержкой шардинга, сохраняем данные с помощью [Durable %SYS](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=ADOCK#ADOCK_iris_durable) и предоставляем `ISC_CPF_MERGE_FILE`, указывающий на наши файлы Merge CPF (которые отличаются для Node1 и Data Nodes). Кроме того, Data Nodes запускаются на минуту позже, чем Node1, но это крайне консервативная оценка, на большинстве серверов время запуска занимает максимум несколько секунд.
+Мы запускаем стандартный образ `intersystems/iris:2021.1.0.215.0` с лицензионным ключом с поддержкой шардинга, сохраняем данные с помощью [Durable %SYS](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=ADOCK#ADOCK_iris_durable) и предоставляем `ISC_CPF_MERGE_FILE`, указывающий на наши файлы Merge CPF (которые отличаются для Node1 и Data Nodes). Кроме того, Data Nodes запускаются на минуту позже, чем Node1, но это крайне консервативная оценка, на большинстве серверов время запуска занимает максимум несколько секунд.
 
 Конфигурация кластера происходит в файлах Merge CPF.
 
