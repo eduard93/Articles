@@ -6,9 +6,10 @@
 # Подготовка
 
 1. Установите InterSystems IRIS.
-2. Установите InterSystems Reports.
-3. Установите [ZPM](https://community.intersystems.com/post/introducing-intersystems-objectscript-package-manager).
-4. Установите модуль ZPM HoleFoolds: `zpm "install samples-bi"`
+2. Установите InterSystems Reports Designer.
+3. (Опционально) Установите InterSystems Reports Server.
+4. Установите [ZPM](https://community.intersystems.com/post/introducing-intersystems-objectscript-package-manager).
+5. Установите модуль ZPM HoleFoolds: `zpm "install samples-bi"`
 
 # Упражнение 1: Создание каталога и источника данных для подключения к InterSystems IRIS 
 
@@ -262,9 +263,46 @@
 
 10. Вернитесь на вкладку `Design` и нажмите `Save`, чтобы сохранить отчет.
 
+# Упражнение 5: Публикация и просмотр отчетов в InterSystems Report Server 
+
+В этом упражнении вы перенесете отчет, которые вы сделали в предыдущих шагах, на InterSystems Report Server и посмотрите, как они будут там отображаться. Затем вы запланируете еженедельную генерацию отчета.
+
+1.	Нажмите `File` > `Publish` > `Publish Report to Server`.
+2.	Авторзуйтесь: `admin`\`admin`, затем нажмите `Connect`.
+3.	На следующем экране обратите внимание, что выбраны и каталог, и отчет, `HoleFoods.cat` и `HoleFoodsPageReport.cls`, соответственно. Местом расположения ресурса выбрана ваша личная папка. Сохраните значения по умолчанию и нажмите `OK`.
+4.	На следующем экране вы можете выбрать стили, доступные для этого отчета на сервере. Нажмите двойную стрелку `>>`, чтобы сделать все стили доступными, затем нажмите OK.
+5.	Нажмите `Yes`.
+6.	Откройте браузер и откройте [InterSystems Reports Server](http://localhost:8888/), затем войдите в систему (`admin`/`admin`).
+7.	В разделе `Open` нажмите `My Folder`, чтобы открыть папку, содержащую все файлы, созданные в InterSystems Reports Designer.
+8.	Нажмите кнопку Run (с треугольником) рядом с `HoleFoodsPageReport.cls`, чтобы запустить отчет, созданный в Designer. 
+![image](https://user-images.githubusercontent.com/5127457/130841620-cd04f82e-3e88-4556-941d-30498dc9eeec.png)
+9. Используйте выпадающее меню справа для переключения между вкладками отчета и просмотра созданной вами диаграммы `Units Sold By Region Chart`.
+![image](https://user-images.githubusercontent.com/5127457/130841715-ab648c11-4175-4514-847f-608c5465b84a.png)
+10.	С помощью элемента управления `Filter` выберите продукт для отображения на гистограмме. 
+![image](https://user-images.githubusercontent.com/5127457/130841975-59a9b042-798d-4299-8a90-befd8853420a.png)
+11.	Закройте отчет, чтобы вернуться в каталог `My Reports`. 
+12.	Далее вы запланируете еженедельные отчеты. Нажмите `HoleFoodsPageReport.cls`, затем значок часов. 
+13.	На вкладке `General`: 
+    - Назовите расписание `Weekly HoleFoods Report Export`. 
+    - Выберите `Export to One File` и нажмите `Next`.
+14.	На вкладке `Publish`: 
+    - Перейдите на вкладку `To Disk` и выберите `Publish to Disk` > `PDF`. 
+    - В поле ввода под выпадающим списком `Publish To Server Resource Tree` введите `/HoleFoodsWeeklyReport`.
+    - ![image](https://user-images.githubusercontent.com/5127457/130842167-1f2ca639-aee4-4f9c-8c50-3c3d8001c35e.png)
+15.	На вкладке `Conditions`: 
+    - В раскрывающемся меню выберите `Run this task periodically`. 
+    - Откройте выпадающее меню `Date` и выберите `Weekly`. 
+    - Выберите `Monday` в качестве дня недели для запуска отчета.
+    - ![image](https://user-images.githubusercontent.com/5127457/130842523-8a3e9d2b-5815-491c-be42-5968b567bf63.png)
+16.	На вкладке `Notification` нажмите `New` и введите свой email, затем нажмите `Finish`.
+17.	Выберите `My Tasks`, чтобы увидеть запланированный отчет
+
+
 # Заключение 
 Создание и публикация отчетов с помощью InterSystems Reports Designer позволяет сделать данные легко интерпретируемыми. Используя интуитивно понятные интерфейсы, вы можете быстро агрегировать, суммировать, перекрестные таблицы и визуализировать данные, чтобы выделить важные закономерности и улучшить бизнес-анализ. 
 В этом упражнении вы взяли на себя роль дизайнера отчетов, чтобы разработать отчеты, которые другие пользователи смогут настраивать и изучать. 
+
+Затем вы стали конечным пользователем, вошли в Server и распространили информацию, содержащуюся в отчетах, по всей организации.
 
 # Ссылки
 
