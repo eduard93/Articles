@@ -1,30 +1,30 @@
 # InterSystems Reports
 
-InterSystems Reports – модуль InterSystems IRIS и InterSystems IRIS for Health. Это надежное современное решение для создания и публикации отчетов, которое включает в себя:
--	Встроенную оперативную отчетность, которая может быть настроена как разработчиками отчетов, так и конечными пользователями.
--	Точное форматирование, позволяющее создавать специализированные формы, например макеты для счетов, документов и т.д.
--	Макеты, обеспечивающие структуру для отображения как агрегированных так и транзакционных данных.
--	Точное позиционирование заголовков, колонтитулов, агрегированных и подробных данных, изображений и вложенных отчетов.
--	Разнообразные типы отчетов.
--	Публицкация и распространение отчетов, включая экспорт в PDF, XLS, HTML, XML и другие форматы файлов, печать и архивирование для соблюдения нормативных требований.
+InterSystems Reports – модуль InterSystems IRIS и InterSystems IRIS for Health. Это современное решение для создания и публикации отчетов, которое включает в себя:
+- Встроенную оперативную отчетность, которая может быть настроена как разработчиками отчетов, так и конечными пользователями.
+- Точное форматирование, позволяющее создавать специализированные формы, например, макеты для счетов, документов и т.д.
+- Макеты, обеспечивающие структуру для отображения как агрегированных, так и транзакционных данных.
+- Позиционирование заголовков, колонтитулов, агрегированных и подробных данных, изображений и вложенных отчетов.
+- Разнообразные типы отчетов.
+- Публикация и распространение отчетов, включая экспорт в PDF, XLS, HTML, XML и другие форматы файлов, печать и архивирование для соблюдения нормативных требований.
 
 
 InterSystems Reports состоит из:
 - Дизайнера отчетов, в котором разработчики создают отчёты.
 - Сервера отчетов, который предоставляет  пользователям доступ через браузер для запуска, планирования, фильтрации и изменения отчетов.
 
-Эта статья посвящена серверной части InterSystems Reports и содержит руководство по запуску Report Server в контейнерах с сохранением данных.
+Эта статья посвящена серверной части InterSystems Reports и содержит руководство по запуску Report Server в контейнерах с сохранением конфигурации.
 
 ## Подготовка
 
 Прежде чем мы начнем, для работы InterSystems Reports должно быть доступно следующее программное обеспечение:
 
-- [Docker](https://docs.docker.com/engine/install/) - хотя InterSystems Reports может работать и без Docker (в опрационных системах Windows, mac, Linux), эта статья посвящена настройке с использованием Docker.
+- [Docker](https://docs.docker.com/engine/install/) - хотя InterSystems Reports может работать и без Docker (в операционных системах Windows, Mac, Linux), эта статья посвящена запуску Reports Server в Docker.
 - (Опционально) [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - для клонирования репозитория, можно также загрузить его в виде [архива](https://github.com/eduard93/reports/archive/refs/heads/master.zip).
 - (Опционально) [InterSystems Reports Designer](https://wrc.intersystems.com/) - для создания новых отчетов.
 
 Дополнительно вам потребуется:
-- Авторизоваться на в Docker registry containers.intersystems.com 
+- [Авторизоваться](https://docs.intersystems.com/components/csp/docbook/DocBook.UI.Page.cls?KEY=PAGE_CONTAINERREGISTRY) в Docker registry `containers.intersystems.com`
 - Лицензия InterSystems Reports
 
 ## План
@@ -37,17 +37,17 @@ InterSystems Reports состоит из:
 
 # Первый запуск
 
-Все шаги здесь - 1-8 используют `docker-compose_setup.yml` в качестве конфигурационного файла docker-compose. Любые дополнительные команды docker-compose во время первого старта должны быть выполнены с аргументом `-f docker-compose_setup.yml`.
+Шаги 1-8 используют `docker-compose_setup.yml` в качестве конфигурационного файла docker-compose. Любые дополнительные команды docker-compose во время первого старта должны быть выполнены с аргументом `-f docker-compose_setup.yml`.
 
 1. Склонируйте это репозиторий: `git clone https://github.com/eduard93/reports.git` или скачайте [архив](https://github.com/eduard93/reports/archive/refs/heads/master.zip).
 
-2. Отредактируйте `config.properties` и укажите информацию о лицензии InterSystems Reports Server (User и Key). Если у вас их нет - обратитесь в InterSystems. Существует ряд [других свойств](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GISR_server), описанных в документации. Обратите внимание, что InterSystems IRIS в данном случае является базой данных для InterSystems Reports, а не источником данных для отчетов (который мы добавим позже позже).
+2. Отредактируйте `config.properties` и укажите информацию о лицензии InterSystems Reports Server (User и Key). Если у вас их нет - обратитесь в InterSystems. Существует ряд [других свойств](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GISR_server), описанных в документации. Обратите внимание, что InterSystems IRIS в данном случае является базой данных для InterSystems Reports, а не источником данных для отчетов (который мы добавим позже).
 
 3. Запустите InterSystems Reports Server: `docker-compose -f docker-compose_setup.yml up -d`
 
-4. Подождите, пока InterSystems Reports Server запустится (проверьте статус `docker-compose -f docker-compose_setup.yml logs reports`). Это может занять 5-10 минут. Сервер отчетов готов к работе, если в журналах отображается: `reports_1 | Logi Report Server is ready for service.`.
+4. Подождите, пока InterSystems Reports Server запустится (проверьте статус `docker-compose -f docker-compose_setup.yml logs reports`). Это может занять 5-10 минут. Сервер отчетов готов к работе, если в логах отображается: `reports_1 | Logi Report Server is ready for service.`.
 
-5. Откройте сервер отчетов. (Пользователь/пароль: `admin`/`admin`). В случае, если тображаентся предупреждение об истекшем сроке действия лицензии, введите информацию о лицензии снова. В резуьтате должен открыться портал InterSystems Reports:
+5. Откройте сервер отчетов. (Пользователь/пароль: `admin`/`admin`). В случае, если отображается предупреждение об истекшем сроке действия лицензии, введите информацию о лицензии заново. В результате должен открыться портал InterSystems Reports:
 
 ![](https://user-images.githubusercontent.com/5127457/120627117-04bded00-c46c-11eb-99ad-5bc89e3bfb76.png)
 
@@ -93,7 +93,7 @@ docker cp reports_reports_1:/opt/LogiReport/Server/style .
 
 ![](https://user-images.githubusercontent.com/5127457/120632973-42257900-c472-11eb-870f-9af4f77a5161.png)
 
-InterSystems Reports поддерживает Unicode из коробки. В этом примере я использую один и тот же инстанс InterSystems IRIS в качестве источника данных, но в общем случае это может быть любой другой сервер InterSystems IRIS - подключение определяется в `catalog`. В этом демо используется набор данных HoleFoods (установлен с помощью `zpm "install samples-bi"`). Чтобы добавить новые источники данных InterSystems IRIS, создайте новый каталог в Designer. После этого создайте новые отчеты и экспортируйте все в новую подпапку в папке отчетов. Также можно указать адрес InterSystems Server, тогда InterSystems Designer загрузит отчёт напрямую на сервер. Контейнер InterSystems Server должен иметь сетевой доступ ко всем серверам IRIS-источникам данных.
+InterSystems Reports поддерживает Unicode из коробки. В этом примере я использую один и тот же инстанс InterSystems IRIS в качестве источника данных, но в общем случае это может быть любой другой сервер InterSystems IRIS - подключение определяется в `catalog`. В этом демо используется набор данных HoleFoods (установлен с помощью `zpm "install samples-bi"`). Чтобы добавить новые источники данных InterSystems IRIS, создайте новый `catalog` в Designer. После этого создайте новые отчеты и экспортируйте все в новую подпапку в папке отчетов. Также можно указать адрес InterSystems Server, тогда InterSystems Designer загрузит отчёт напрямую на сервер. Контейнер InterSystems Server должен иметь сетевой доступ ко всем серверам IRIS - источникам данных.
 
 Вот и все! Теперь, если вы хотите остановить Reports, выполните: `docker-compose stop`. А чтобы снова запустить Reports, выполните: `docker-compose up -d`. После перезапуска все отчеты по-прежнему доступны.
 
@@ -119,11 +119,12 @@ logger.Dump.level = TRIVIAL
 # API
 
 Чтобы встроить отчеты в ваше веб-приложение, используйте [Embedded API](https://documentation.logianalytics.com/logiinfov12/content/embedded-reports-api.htm).
+
 Другие [доступные API](https://documentation.logianalytics.com/logireportserverguidev17/content/html/api/wkapi_srv.htm).
 
 # Заключение
 
-InterSystems Reports представляет собой надежное современное решение для создания отчетов. InterSystems Reports Server предоставляет конечным пользователям доступ через браузер для запуска, планирования, фильтрации и изменения отчетов. InterSystems Reports Server может быть запущен как на хосте так и в среде Docker.
+InterSystems Reports представляет собой надежное современное решение для создания отчетов. InterSystems Reports Server предоставляет конечным пользователям доступ через браузер для запуска, планирования, фильтрации и изменения отчетов. InterSystems Reports Server может быть запущен как на хосте, так и в среде Docker.
 
 # Ссылки
 
