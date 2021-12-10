@@ -703,6 +703,48 @@ Cannot divide by zero
 
 В файл `messages.log` следует отправлять только важные сообщения.
 
+### Сигналы
+
+И IRIS, и Python регистрируют обработчики сигналов для обеспечения надлежащей интеграции с операционной системой, однако иногда они могут конфликтовать. В идеале, мы должны работать с обработчиками сигналов IRIS во время выполнения кода IRIS и переходить на обработчики сигналов Python во время выполнении кода Python. Бенчмаркинг показал, что вызовы `sigaction` являются достаточно дорогими, поэтому по умолчанию мы оставляем обработчики сигналов IRIS. Это означает, что для долго работающего метода Python, Ctrl-C не будет передан.
+
+Если вам необходимо, чтобы при вызове метода Python была включена обработка сигналов Python, вы можете использовать метод `$system.Python.ChangeSignalState`:
+
+```
+set oldstate = $system.Python.ChangeSignalState(0) ; Включение обработки сигналов для Python
+do obj."slow_python_method"() ; Ctrl-C теперь работает и обрабатывается Python
+do $system.Python.ChangeSignalState(oldstate) ; Отключение обработки сигналов для Python
+```
+
+### Отладка
+
+Иногда необходимо отладить код Python, например, чтобы диагностировать исключение в коде Python. Можно использовать [отладчик Python](https://docs.python.org/3.9/library/pdb.html) внутри InterSystems IRIS. Однако вам необходимо включить его вызовом, чтобы предотвратить обработку и очистку ошибок при вызове Python кода. Это делается с помощью метода `$system.Python.Debugging`
+
+```
+do $system.Debugging(1) ; InterSystems IRIS теперь НЕ обрабатывает исключения Python
+set pdb = $system.Python.Import("pdb") ; импорт дебаггера
+do obj."erroneous_python_method"()
+do pdb.pm() ; вывод дебаг информации
+do $system.Debugging(0) ; InterSystems IRIS вновь обрабатывает исключения Python
+```
+
+### Профилирование
+
+Профилирование кода Python возможно с помощью пакетов [cProfile](https://docs.python.org/3.9/library/profile.html) и [pstats](https://docs.python.org/3.9/library/profile.html?highlight=pstats#module-pstats):
+
+```
+set cp = $system.Python.Import("cProfile")
+set pstats = $system.Python.Import("pstats")
+set profiler = cp.Profile()
+do profiler.enable()
+do obj."python_method_to_profile"()
+do profiler.disable()
+set ps = pstats.Stats(profiler)
+do ps."sort_stats"(pstats.SortKey.CUMULATIVE)
+do ps."print_stats"()
+```
+
+Этот пример создаст отчет о профилировании на основе времени, проведенного в функциях Python.
+
 ### Интеграционные решения
 
 Если вы разрабатываете собственные классы бизнес-хостов или адаптеров для интеграционных решений InterSystems IRIS, любые коллбэк методы (такие как `OnProcessInput` или `OnInit`) должны быть написаны на ObjectScript. Код ObjectScript может, использовать библиотеки Python или вызывать другие методы, реализованные полностью на Python. 
