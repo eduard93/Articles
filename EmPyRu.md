@@ -390,6 +390,319 @@ hello world
 
 ## Различия
 
+Из-за различий между ObjectScript и Python необходимо InterSystems разработали несколько вспомогательных функций, которые помогут вам преодолеть различия между языками.
+
+### Builtins
+
+Пакет builtins загружается автоматически при запуске интерпретатора Python и содержит все [встроенные функции](https://docs.python.org/3.9/library/functions.html#built-in-funcs), [константы](https://docs.python.org/3/library/constants.html#built-in-consts) и [классы](https://docs.python.org/3.9/library/stdtypes.html), такие как базовый класс объекта, классы типов данных, классы исключений.
+
+Вы можете импортировать этот пакет в ObjectScript, чтобы получить доступ ко всем этим идентификаторам следующим образом:
+
+```
+set builtins = ##class(%SYS.Python).Import("builtins")
+set builtins = $system.Python.Builtins()
+```
+
+Например функция Python `print` является методом модуля `builtins`, поэтому вы можете использовать эту функцию из ObjectScript:
+
+```
+>do builtins.print("hello world!")
+hello world!
+```
+
+Команда zwrite может быть использована для просмотра объекта builtins (как и любого другого объекта), и, поскольку это объект Python, он использует метод `str` пакета builtins для получения текстового представления объекта. Например:
+
+```
+>zwrite builtins
+builtins=5@%SYS.Python  ; <module 'builtins' (built-in)>  ; <OREF>
+```
+
+Теперь создадим пустой список Python:
+
+```
+USER>set list = builtins.list()
+ 
+USER>zwrite list
+list=5@%SYS.Python  ; []  ; <OREF>
+```
+
+Используйте `type` чтобы узнать какого класса объект:
+
+```
+>zwrite builtins.type(list)
+3@%SYS.Python  ; <class 'list'>  ; <OREF>
+```
+
+Посмотрим, какие методы есть у этого объекта, используя метод `dir`:
+
+```
+>zwrite builtins.dir(list)
+3@%SYS.Python  ; ['__add__', '__class__', '__class_getitem__', '__contains__', '__delattr__', '__delitem__', '__dir__', '__doc__', 
+'__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__gt__', '__hash__', '__iadd__', '__imul__', '__init__', 
+'__init_subclass__', '__iter__', '__le__', '__len__', '__lt__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', 
+'__repr__', '__reversed__', '__rmul__', '__setattr__', '__setitem__', '__sizeof__', '__str__', '__subclasshook__', 'append', 
+'clear', 'copy', 'count', 'extend', 'index', 'insert', 'pop', 'remove', 'reverse', 'sort']  ; <OREF>
+ ```
+
+Метод `help` выводит подробную информацию. Ещё больше информации можно получить используя библиотеку [rich](https://github.com/willmcgugan/rich#rich-inspect).
+
+```
+>do builtins.help(list)
+Help on list object:
+class list(object)
+ |  list(iterable=(), /)
+ |
+ |  Built-in mutable sequence.
+ |
+ |  If no argument is given, the constructor creates a new empty list.
+ |  The argument must be an iterable if specified.
+ |
+ |  Methods defined here:
+ |
+ |  __add__(self, value, /)
+ |      Return self+value.
+ |
+ |  __contains__(self, key, /)
+ |      Return key in self.
+ |
+ |  __delitem__(self, key, /)
+ |      Delete self[key].
+```
+
+### Идентификаторы
+
+Правила именования идентификаторов отличаются между ObjectScript и Python. Например, подчеркивание (`_`) разрешено в именах методов Python, и широко используется для так называемых методов и атрибутов "dunder" ("dunder" - сокращение от "double underscore"), таких как `__getitem__` или `__class__`. Чтобы использовать такие идентификаторы в ObjectScript, обрамляйте их двойными кавычками:
+
+```
+>set mylist = builtins.list()
+>zwrite mylist."__class__"
+2@%SYS.Python  ; <class list>  ; <OREF>
+```
+
+И наоборот, методы InterSystems IRIS часто начинаются со знака процента (`%`). например, `%New` или `%Save`. Чтобы использовать такие идентификаторы из Python, замените знак процента на знак подчеркивания. Если у вас есть класс `User.Person`, то следующая строка кода Python создает новый объект `Person`.
+
+```python
+import iris
+p = iris.cls('User.Person')._New()
+```
+
+## Именованные и позиционные аргументы
+
+В Python возможно использовать именованные (ключевые) аргументы в сигнатуре метода. Это позволяет легко пропускать аргументы, если они не нужны, или указывать аргументы в соответствии с их именами, а не позициями. В качестве примера возьмем следующий метод:
+
+```python
+def mymethod(foo=1, bar=2, baz="three"):
+    print(f"foo={foo}, bar={bar}, baz={baz}")
+```
+
+Поскольку в InterSystems IRIS отсутствует концепция именованных аргументов, необходимо создать [динамический объект](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=GJSON_create) для хранения пар ключевое слово/значение, например:
+
+```
+set args={ "bar": 123, "foo": "foo"}
+```
+
+Если метод `mymethod`  определён в модуле `mymodule`, то его можно вызвать так:
+
+```
+>set obj = ##class(%SYS.Python).Import("mymodule")
+>set args={ "bar": 123, "foo": "foo"}
+>do obj.mymethod(args...)
+foo=foo, bar=123, baz=three
+```
+
+Поскольку `baz` не был передан в метод, ему по умолчанию присваивается значение `three`.
+
+### Ссылочные аргументы
+
+Аргументы в методах ObjectScript, могут передаваться по значению или по ссылке. В приведенном ниже методе ключевое слово `ByRef` перед вторым и третьим аргументами в сигнатуре указывает, что они предназначены для передачи по ссылке:
+
+```
+ClassMethod SandwichSwitch(bread As %String, ByRef filling1 As %String, ByRef filling2 As %String)
+{
+    set bread = "whole wheat"
+    set filling1 = "almond butter"
+    set filling2 = "cherry preserves"
+}
+```
+
+При вызове метода из ObjectScript поставьте точку перед аргументом, чтобы передать его по ссылке, как показано ниже:
+
+```
+>set arg1 = "white bread"
+>set arg2 = "peanut butter"
+>set arg3 = "grape jelly"
+>do ##class(User.EmbeddedPython).SandwichSwitch(arg1, .arg2, .arg3)
+>write arg1
+white bread
+
+>write arg2
+almond butter
+
+>write arg3
+cherry preserves
+```
+
+Видно, что значение переменной `arg1` после вызова `SandwichSwitch` осталось прежним, а значения переменных `arg2` и `arg3` изменились.
+
+Поскольку Python не поддерживает вызов по ссылке изначально, необходимо использовать метод `iris.ref` для создания ссылки для передачи в метод для каждого аргумента, передаваемого по ссылке:
+
+```
+>>> import iris
+>>> arg1 = "white bread"
+>>> arg2 = iris.ref("peanut butter")
+>>> arg3 = iris.ref("grape jelly")
+>>> iris.cls('User.EmbeddedPython').SandwichSwitch(arg1, arg2, arg3)
+>>> arg1
+'white bread'
+
+>>> arg2.value
+'almond butter'
+
+>>> arg3.value
+'cherry preserves'
+```
+
+Вы можете использовать свойство `value` для доступа к значениям `arg2` и `arg3` и увидеть, что они изменились после вызова метода.
+
+Важно! ByRef как и Output являются лишь рекомендацией. Передача по значению или по ссылке всегда зывисит от вызывающей стороны. Пользователь, вызывающий код, может как передавать по ссылке аргументы без модификаторов ByRef, Output так и передавать значение в аргумент, ожидающий передачу по ссылке.
+
+Важно! Объекты передаются по ссылке по-умолчанию. Передача через точку передаёт вместо ссылки на объект ссылку на ссылку на объект, позволяя заменять ссылку на объект внутри вызываемого метода. Это достаточно редко используемая возможность актуальная, как правило, при написании коллбэков.
+
+
+### True, False, None
+
+Класс `%SYS.Python` определяет методы `True`, `False` и `None`, которые возвращают соответствующие Python объекты:
+
+```
+>zwrite ##class(%SYS.Python).True()
+2@%SYS.Python  ; True  ; <OREF>
+```
+
+Используйте их для вызова Python методов. В случае если метод возвращает одно из этих значений они будут автоматически сконвертированы в `1`, `0` и `""` соответственно.
+
+### Словари Dict
+
+Для работы со [словарями](https://docs.python.org/3/tutorial/datastructures.html#dictionaries) Python используйте метод `dict` модуля `builtins`:
+
+```
+>set mycar = $system.Python.Builtins().dict()
+>do mycar.setdefault("make", "Toyota") 
+>do mycar.setdefault("model", "RAV4")
+>do mycar.setdefault("color", "blue")
+
+>zwrite mycar
+mycar=2@%SYS.Python  ; {'make': 'Toyota', 'model': 'RAV4', 'color': 'blue'}  ; <OREF>
+ 
+>write mycar."__getitem__"("color")
+blue
+```
+
+В примере выше используется метод `setdefault` для установки значения ключа и `__getitem__` для получения значения ключа.
+
+### Списки Lists
+
+В Python [списки](https://docs.python.org/3/tutorial/datastructures.html) хранят коллекции значений. Доступ к элементам списка осуществляется по их индексу.
+
+```python
+>>> fruits = ["apple", "banana", "cherry"]
+>>> print(fruits)
+['apple', 'banana', 'cherry']
+>>> print(fruits[0])
+apple
+```
+
+В ObjectScript вы можете работать со списками Python, используя метод `list` модуля `builtins`:
+
+```
+>set l = ##class(%SYS.Python).Builtins().list()
+>do l.append("apple")
+>do l.append("banana")
+>do l.append("cherry")
+
+>zwrite l
+l=13@%SYS.Python  ; ['apple', 'banana', 'cherry']  ; <OREF>
+ 
+>write l."__getitem__"(0)
+apple
+```
+
+В приведенном выше примере используется метод `append` для добавления элемента в список и `__getitem__` для получения значения по индексу. (списки Python начинаются с нуля).
+
+### Исключения
+
+Исключения Python и ObjectScript преобразуются друг в друга в зависимости от контекста.
+
+### Строки и байты
+
+Python разделяет объекты byte, которые представляют собой последовательности 8-битных байтов, и строки string, которые являются последовательностями байтов UTF-8, представляющими строку. В Python объекты типа byte никак не преобразуются, но строки могут быть преобразованы в зависимости от набора символов, используемого операционной системой хоста, например, CP1251.
+
+InterSystems IRIS не делает различий между байтами и строками. Хотя InterSystems IRIS поддерживает строки Unicode (USC-2/UTF-16), любая строка, вкоторой все значения символов менее 256, может быть либо строкой, либо массивом байтов. По этой причине при передаче строк и байтов в Python и из него действуют следующие правила:
+
+- Строки InterSystems IRIS считаются строками и преобразуются в UTF-8 при передаче из ObjectScript в Python.
+- Строки Python преобразуются из UTF-8 в строки InterSystems IRIS при передаче обратно в ObjectScript, что может привести к появлению широких символов.
+- Объекты byte из Python возвращаются в ObjectScript как 8-битные строки. Если длина байтового объекта превышает максимальную длину строки, то возвращается байтовый объект Python.
+- Чтобы передать байтовые объекты в Python из ObjectScript, используйте метод `%SYS.Python:Bytes`, который НЕ преобразует базовую строку InterSystems IRIS в UTF-8.
+
+Следующий пример превращает строку InterSystems IRIS в объект Python типа bytes:
+
+```
+>set b = ##class(%SYS.Python).Bytes("Hello Bytes!")
+
+>zwrite b
+b=8@%SYS.Python  ; b'Hello Bytes!'  ; <OREF>
+ 
+>zwrite builtins.type(b)
+4@%SYS.Python  ; <class 'bytes'>  ; <OREF>
+```
+
+Для создания байтовых объектов Python, длина которых превышает максимальную длину строки 3,8 МБ в InterSystems IRIS, вы можете использовать объект bytearray и добавлять к нему меньшие фрагменты байтов с помощью метода `extend`. Наконец, передайте объект bytearray в метод `bytes`, чтобы получить байты:
+
+```
+>set ba = builtins.bytearray()
+>do ba.extend(##class(%SYS.Python).Bytes("chunk 1"))
+>do ba.extend(##class(%SYS.Python).Bytes("chunk 2"))
+ >zwrite builtins.bytes(ba)
+"chunk 1chunk 2"
+```
+
+### IO
+
+При использовании Python стандартный вывод (stdout) перенаправляется в консоль InterSystems IRIS, что означает, что вывод `print` отправляется в терминал. Стандартная ошибка (stderr) перенаправляется в messages.log, расположенный в каталоге `<install-dir>/mgr`.
+
+В качестве примера рассмотрим этот метод Python:
+
+```
+def divide(a, b):
+    try:
+        print(a/b)
+    except ZeroDivisionError:
+        print("Cannot divide by zero")
+    except TypeError:
+        import sys
+        print("Bad argument type", file=sys.stderr)
+    except:
+        print("Something else went wrong")
+```
+
+Протестируем его в терминале:
+
+```
+>set obj = ##class(%SYS.Python).Import("mymodule")
+ 
+>do obj.divide(5, 0)
+Cannot divide by zero
+ 
+>do obj.divide(5, "hello")
+```
+
+Если вы пытаетесь разделить на ноль, сообщение об ошибке направляется в терминал, но если вы пытаетесь разделить на строку, сообщение отправляется в `messages.log`:
+
+```
+11/19/21-15:49:33:248 (28804) 0 [Python] Bad argument type
+```
+
+В файл `messages.log` следует отправлять только важные сообщения.
+
 ## Интеграционные решения
 
 Если вы разрабатываете собственные классы бизнес-хостов или адаптеров для интеграционных решений InterSystems IRIS, любые коллбэк методы (такие как `OnProcessInput` или `OnInit`) должны быть написаны на ObjectScript. Код ObjectScript может, использовать библиотеки Python или вызывать другие методы, реализованные полностью на Python. 
@@ -402,7 +715,7 @@ hello world
 
 ## Выводы
 
-
+Embedded Python позволяет использовать язык программирования Python вместе с InterSystems ObjectScript. Если вы разработчик на ObjectScript теперь вы можете получить доступ ко всем библиотекам Python прямо в InterSystems IRIS. Если же вы разработчик Python, теперь вы можето писать код в InterSystems IRIS только на языке Python. 
 
 ## Ссылки
 
