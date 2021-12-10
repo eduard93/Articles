@@ -720,7 +720,7 @@ do $system.Python.ChangeSignalState(oldstate)      ; Отключение обр
 Иногда необходимо отладить код Python, например, чтобы диагностировать исключение в коде Python. Можно использовать [отладчик Python](https://docs.python.org/3.9/library/pdb.html) внутри InterSystems IRIS. Однако вам необходимо включить его вызовом, чтобы предотвратить обработку и очистку ошибок при вызове Python кода. Это делается с помощью метода `$system.Python.Debugging`
 
 ```
-do $system.Debugging(1) ; InterSystems IRIS теперь НЕ обрабатывает исключения Python
+do $system.Debugging(1)                ; InterSystems IRIS теперь НЕ обрабатывает исключения Python
 set pdb = $system.Python.Import("pdb") ; импорт дебаггера
 do obj."erroneous_python_method"()
 do pdb.pm()                            ; вывод дебаг информации
