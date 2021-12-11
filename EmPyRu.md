@@ -121,7 +121,7 @@ geopy=2@%SYS.Python ; <module 'geopy' from 'c:\\\intersystems\\iris\\mgr\\python
 
 Чтобы получить доступ к классу InterSystems IRIS, импортируйте модуль `iris`, а затем инстанцируйте класс как объект. После этого вы можете использовать его свойства и методы так же, как и свойства и методы классов Python.
 
-Вызовем метод `ManagerDirectory` системного класса [%Library.File](https://docs.intersystems.com/iris20212/csp/documatic/%25CSP.Documatic.cls?LIBRARY=%25SYS&CLASSNAME=%25Library.File#ManagerDirectory) для вывода пути к mgr каталогу InterSystems IRIS:
+Вызовем метод `ManagerDirectory` системного класса [%Library.File](https://docs.intersystems.com/iris20212/csp/documatic/%25CSP.Documatic.cls?LIBRARY=%25SYS&CLASSNAME=%25Library.File#ManagerDirectory) для вывода пути к `mgr` каталогу InterSystems IRIS:
 
 ```
 >>> import iris
@@ -158,7 +158,7 @@ Relationship Employees As Employee [ Cardinality = many, Inverse = Company ];
 
 Этот класс наследуется от [%Library.Persistent](https://docs.intersystems.com/iris20212/csp/documatic/%25CSP.Documatic.cls?LIBRARY=%25SYS&CLASSNAME=%25Library.Persistent) (часто просто `%Persistent`), что означает, что объекты этого класса могут быть сохранены в базе данных InterSystems IRIS. Класс также имеет несколько свойств, включая `Name` и `TaxID`, оба из которых необходимы для сохранения объекта.
 
-Хотя их не видно в определении класса, хранимые классы поставляются с рядом методов для работы с объектами этого класса, таких как `%New`, `%Save`, `%Id` и `%OpenId`. Однако знаки процента (`%`) не допускаются в именах методов Python, поэтому вместо них используется знак подчеркивания (`_`).
+Хотя их не видно в определении класса, хранимые классы поставляются с рядом методов для работы с объектами этого класса, таких как `%New`, `%Save`, `%Id` и `%OpenId` ([документация](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GOBJ_persobj_intro)). Однако знаки процента (`%`) не допускаются в именах методов Python, поэтому вместо них используется знак подчеркивания (`_`).
 
 Приведенный ниже код создает новый объект Company, устанавливает обязательные свойства Name и TaxID, а затем сохраняет компанию в базе данных:
 
@@ -174,19 +174,7 @@ Relationship Employees As Employee [ Cardinality = many, Inverse = Company ];
 22
 ```
 
-Приведенный выше код использует метод `_New` для создания экземпляра класса и `_Save` для сохранения экземпляра в базе данных. Метод `_Save` возвращает статус. В данном случае `1` означает, что сохранение прошло успешно. Когда вы сохраняете объект, InterSystems IRIS присваивает ему уникальный идентификатор, который вы можете использовать для извлечения объекта из базы данных. Метод `_Id` возвращает идентификатор объекта.
-
-Важно! Для работы со [статусами](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=ASTATUS) используйте методы класса [%SYSTEM.Status](https://docs.intersystems.com/irislatest/csp/documatic/%25CSP.Documatic.cls?&LIBRARY=%25SYS&CLASSNAME=%25SYSTEM.Status) (коды [статусов](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=RERR_gen)):
-
-```
->>> systemStatus = iris.cls('%SYSTEM.Status')
->>> sc = systemStatus.Error(5001,'MyText')     # Создать статус
->>> systemStatus.IsError(sc)                   # 1 - ошибка, 0 - ОК
-1
-
->>> systemStatus.GetErrorText(sc)              # Получить текст ошибки
-'ERROR #5001: MyText'
-```
+Приведенный выше код использует метод `_New` для создания экземпляра класса и `_Save` для сохранения экземпляра в базе данных. Метод `_Save` возвращает статус (подробнее см. раздел Статусы). В данном случае `1` означает, что сохранение прошло успешно. Когда вы сохраняете объект, InterSystems IRIS присваивает ему уникальный идентификатор, который вы можете использовать для извлечения объекта из базы данных. Метод `_Id` возвращает идентификатор объекта.
 
 Для извлечения объекта из постоянного хранилища в память для обработки используйте метод `_OpenId` класса:
 
@@ -196,7 +184,7 @@ Relationship Employees As Employee [ Cardinality = many, Inverse = Company ];
 Acme Widgets, Inc.
 ```
 
-Добавим метод `Print`, который печатает название и TaxID компании. Установка ключевого слова `Language` равным `python` сообщает компилятору класса, что метод написан на языке Python.
+Добавим метод `Print`, который печатает `Name` и `TaxID` компании. Установка ключевого слова `Language` равным `python` сообщает компилятору класса, что метод написан на языке Python.
 
 ```
 Method Print() [ Language = python ]
@@ -229,7 +217,7 @@ Name: Acme Widgets, Inc. TaxID: 123456789
 [0]: [Acme Widgets, Inc.', 123456789]
 ```
 
-### Процедуры, триггеры
+### SQL процедуры, триггеры
 
 Любой метод класса InterSystems IRIS может быть доступен из SQL. Для этого добавьте [SQLProc](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=ROBJ_method_sqlproc) в ключевые слова метода.
 
@@ -260,7 +248,7 @@ SELECT tzconvert(now(), 'Europe/Moscow', 'UTC')
 
 В InterSystems IRIS все данные хранятся в глобалах. Глобалы - это массивы, которые являются хранимыми (то есть хранятся на диске), многомерными (то есть могут иметь любое количество подзаписей) и разреженными (то есть подзаписи не обязательно должны быть смежными). Когда вы храните объекты класса или строки в таблице, эти данные хранятся в глобалах, хотя вы обычно обращаетесь к ним через объектную модель или SQL и не работаете с глобалами напрямую.
 
-Иногда бывает полезно хранить данные в глобалах, не создавая класс или таблицу SQL. В InterSystems IRIS глобал выглядит так же, как и любая другая переменная, но перед ее именем ставится каретка (`^`). В следующем примере имена рабочих дней хранятся в глобале ^Workdays.
+Иногда бывает полезно хранить данные в глобалах, не создавая класс или таблицу SQL. В InterSystems IRIS глобал выглядит так же, как и любая другая переменная, но перед ее именем ставится каретка (`^`). В следующем примере имена рабочих дней хранятся в глобале `^Workdays`.
 
 ```
 >>> myGref = iris.gref('^Workdays')
@@ -632,6 +620,22 @@ apple
 
 Исключения Python и ObjectScript преобразуются друг в друга в зависимости от контекста.
 
+### Статусы (%Status)
+
+Большое число методов InterSystems IRIS озвращают структуру %Status. Для работы со [статусами](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=ASTATUS) используйте методы класса [%SYSTEM.Status](https://docs.intersystems.com/irislatest/csp/documatic/%25CSP.Documatic.cls?&LIBRARY=%25SYS&CLASSNAME=%25SYSTEM.Status):
+
+```
+>>> systemStatus = iris.cls('%SYSTEM.Status')
+>>> sc = systemStatus.Error(5001,'MyText')     # Создать статус
+>>> systemStatus.IsError(sc)                   # Проверить статус: 1 - ошибка, 0 - ОК
+1
+
+>>> systemStatus.GetErrorText(sc)              # Получить текст ошибки
+'ERROR #5001: MyText'
+```
+
+Полный список кодов статусов доступен в [документации](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=RERR_gen). Также можно определять [пользовательские коды статусов](https://www.sql.ru/blogs/servit/1279).
+
 ### Строки и байты
 
 Python разделяет объекты byte, которые представляют собой последовательности 8-битных байтов, и строки string, которые являются последовательностями байтов UTF-8, представляющими строку. В Python объекты типа byte никак не преобразуются, но строки могут быть преобразованы в зависимости от набора символов, используемого операционной системой хоста, например, CP1251.
@@ -710,21 +714,21 @@ Cannot divide by zero
 Если вам необходимо, чтобы при вызове метода Python была включена обработка сигналов Python, вы можете использовать метод `$system.Python.ChangeSignalState`:
 
 ```
-set oldstate = $system.Python.ChangeSignalState(0) ; Включение обработки сигналов для Python
-do obj."slow_python_method"()                      ; Ctrl-C теперь работает и обрабатывается Python
-do $system.Python.ChangeSignalState(oldstate)      ; Отключение обработки сигналов для Python
+set oldstate = $system.Python.ChangeSignalState(0) # Включение обработки сигналов для Python
+do obj."slow_python_method"()                      # Ctrl-C теперь работает и обрабатывается Python
+do $system.Python.ChangeSignalState(oldstate)      # Отключение обработки сигналов для Python
 ```
 
 ### Отладка
 
-Иногда необходимо отладить код Python, например, чтобы диагностировать исключение в коде Python. Можно использовать [отладчик Python](https://docs.python.org/3.9/library/pdb.html) внутри InterSystems IRIS. Однако вам необходимо включить его вызовом, чтобы предотвратить обработку и очистку ошибок при вызове Python кода. Это делается с помощью метода `$system.Python.Debugging`
+Иногда необходимо отладить код Python, например, чтобы диагностировать исключение в коде Python. Можно использовать [отладчик Python](https://docs.python.org/3.9/library/pdb.html) внутри InterSystems IRIS. Однако вам необходимо включить его вызовом, чтобы предотвратить обработку и очистку ошибок при вызове Python кода. Это делается с помощью метода `$system.Python.Debugging`:
 
 ```
-do $system.Debugging(1)                ; InterSystems IRIS теперь НЕ обрабатывает исключения Python
-set pdb = $system.Python.Import("pdb") ; импорт дебаггера
+do $system.Debugging(1)                # InterSystems IRIS теперь НЕ обрабатывает исключения Python
+set pdb = $system.Python.Import("pdb") # импорт дебаггера
 do obj."erroneous_python_method"()
-do pdb.pm()                            ; вывод дебаг информации
-do $system.Debugging(0)                ; InterSystems IRIS вновь обрабатывает исключения Python
+do pdb.pm()                            # вывод дебаг информации
+do $system.Debugging(0)                # InterSystems IRIS вновь обрабатывает исключения Python
 ```
 
 ### Профилирование
