@@ -769,3 +769,4 @@ Embedded Python позволяет использовать язык прогр�
 - [Сессии Python на Virtual Summit 2021](https://www.intersystems.com/virtual-summit-2021/#python)
 - [Репозиторий с примерами](https://github.com/intersystems-community/OpcUA-empy)
 - [Вебинар]()
+- код с eap
