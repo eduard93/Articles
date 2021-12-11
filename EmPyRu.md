@@ -38,7 +38,7 @@ C:\InterSystems\IRIS\bin\irispip install --target C:\InterSystems\IRIS\mgr\pytho
 
 Например, следующая команда импортирует модуль [math](https://docs.python.org/3/library/math.html):
 
-```
+```objectscript
 set pymath = ##class(%SYS.Python).Import("math")
 ```
 
@@ -79,7 +79,7 @@ Successfully installed geographiclib-1.52 geopy-2.2.0
 
 Затем выполните следующие команды в терминале, чтобы импортировать и использовать модуль `geopy`:
 
-```
+```objectscript
 set geopy = ##class(%SYS.Python).Import("geopy")
 set args = { "user_agent": "Embedded Python" }
 set geolocator = geopy.Nominatim(args...)
@@ -134,7 +134,7 @@ C:\InterSystems\IRIS\mgr\
 
 Класс Sample.Company:
 
-```
+```objectscript
 Class Sample.Company Extends (%Persistent, %Populate, %XML.Adaptor)
 {
 
@@ -186,7 +186,7 @@ Acme Widgets, Inc.
 
 Добавим метод `Print`, который печатает `Name` и `TaxID` компании. Установка ключевого слова `Language` равным `python` сообщает компилятору класса, что метод написан на языке Python.
 
-```
+```objectscript
 Method Print() [ Language = python ]
 {
     print('\nName: ' + self.Name + ' TaxID: ' + self.TaxID)
@@ -278,7 +278,7 @@ InterSystems IRIS облегчает совместную работу смеш�
 
 Следующий класс имеет метод `Print`, написанный на Python, и метод `Write`, написанный на ObjectScript, но функционально они эквивалентны, и любой из методов может быть вызван из Python или ObjectScript.
 
-```
+```objectscript
 Class Sample.Company Extends (%Persistent, %Populate, %XML.Adaptor)
 {
 
@@ -376,9 +376,9 @@ spb=11@%SYS.Python  ; [59.9311, 30.3609]  ; <OREF>
 hello world
 ```
 
-## Различия
+## Особенности
 
-Из-за различий между ObjectScript и Python необходимо InterSystems разработали несколько вспомогательных функций, которые помогут вам преодолеть различия между языками.
+Из-за некоторых различий между ObjectScript и Python в InterSystems IRIS добавили несколько вспомогательных функций, которые помогут вам преодолеть различия между языками.
 
 ### Builtins
 
@@ -502,9 +502,9 @@ foo=foo, bar=123, baz=three
 
 ### Ссылочные аргументы
 
-Аргументы в методах ObjectScript, могут передаваться по значению или по ссылке. В приведенном ниже методе ключевое слово `ByRef` перед вторым и третьим аргументами в сигнатуре указывает, что они предназначены для передачи по ссылке:
+Аргументы в методах ObjectScript могут передаваться как по значению так и по ссылке ([документация](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GORIENT_ch_class#GORIENT_class_method_arguments)). В приведенном ниже методе ключевое слово `ByRef` перед вторым и третьим аргументами в сигнатуре указывает, что они предназначены для передачи по ссылке:
 
-```
+```objectscript
 ClassMethod SandwichSwitch(bread As %String, ByRef filling1 As %String, ByRef filling2 As %String)
 {
     set bread = "whole wheat"
@@ -675,7 +675,7 @@ b=8@%SYS.Python  ; b'Hello Bytes!'  ; <OREF>
 
 В качестве примера рассмотрим метод Python:
 
-```
+```python
 def divide(a, b):
     try:
         print(a/b)
@@ -713,7 +713,7 @@ Cannot divide by zero
 
 Если вам необходимо, чтобы при вызове метода Python была включена обработка сигналов Python, вы можете использовать метод `$system.Python.ChangeSignalState`:
 
-```
+```objectscript
 set oldstate = $system.Python.ChangeSignalState(0) # Включение обработки сигналов для Python
 do obj."slow_python_method"()                      # Ctrl-C теперь работает и обрабатывается Python
 do $system.Python.ChangeSignalState(oldstate)      # Отключение обработки сигналов для Python
@@ -723,7 +723,7 @@ do $system.Python.ChangeSignalState(oldstate)      # Отключение обр
 
 Иногда необходимо отладить код Python, например, чтобы диагностировать исключение в коде Python. Можно использовать [отладчик Python](https://docs.python.org/3.9/library/pdb.html) внутри InterSystems IRIS. Однако вам необходимо включить его вызовом, чтобы предотвратить обработку и очистку ошибок при вызове Python кода. Это делается с помощью метода `$system.Python.Debugging`:
 
-```
+```objectscript
 do $system.Debugging(1)                # InterSystems IRIS теперь НЕ обрабатывает исключения Python
 set pdb = $system.Python.Import("pdb") # импорт дебаггера
 do obj."erroneous_python_method"()
@@ -735,7 +735,7 @@ do $system.Debugging(0)                # InterSystems IRIS вновь обраб
 
 Профилирование кода Python возможно с помощью пакетов [cProfile](https://docs.python.org/3.9/library/profile.html) и [pstats](https://docs.python.org/3.9/library/profile.html?highlight=pstats#module-pstats):
 
-```
+```objectscript
 set cp = $system.Python.Import("cProfile")
 set pstats = $system.Python.Import("pstats")
 set profiler = cp.Profile()
