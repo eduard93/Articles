@@ -767,6 +767,20 @@ Embedded Python позволяет использовать язык прогр�
 
 - Документация: [1](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=AFL_epython#AFL_epython_irisapi), [2](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=AEPYTHON)
 - [Сессии Python на Virtual Summit 2021](https://www.intersystems.com/virtual-summit-2021/#python)
-- [Репозиторий с примерами](https://github.com/intersystems-community/OpcUA-empy)
 - [Вебинар]()
-- код с eap
+
+## Примеры кода
+
+- [Продукция с OpcUA, AWS](https://github.com/intersystems-community/OpcUA-empy)
+- [Exchange Inbound Adapter](https://github.com/grongierisc/eap1-exchangelib/)
+- [YAML](https://gist.github.com/eduard93/49267de2012eb634b1d0cc55938f4ee6)
+- [Jupyter Kernel](https://github.com/grongierisc/objectsriptkernel/)
+- [JSON patch](https://github.com/grongierisc/objectscript-json-patch)
+- [JSON Schema](https://github.com/intersystems-ib/iris-eap-pypoc)
+- [GEO examples](https://github.com/intersystems-ib/geo-IRIS)
+- [Yahoo Finance Data](https://github.com/abanadisc/yfinance-iris/blob/main/Yfinance.HistoricalDaily.xml)
+- [Web парсер](https://github.com/acagarcia/zupa)
+- [HTML Parser](https://github.com/eduard93/HTMLParser)
+- [Kafka](https://github.com/eduard93/kafka-empy-demo/)
+- [w2v](https://github.com/renesto/w2v4IRIS)
+- [IntegratedML](https://github.com/grongierisc/integrated-ml-demo)
