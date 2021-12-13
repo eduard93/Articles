@@ -777,7 +777,6 @@ Embedded Python позволяет использовать язык прогр�
 - [Jupyter Kernel](https://github.com/grongierisc/objectsriptkernel/)
 - [JSON patch](https://github.com/grongierisc/objectscript-json-patch)
 - [JSON Schema](https://github.com/intersystems-ib/iris-eap-pypoc)
-- [GEO examples](https://github.com/intersystems-ib/geo-IRIS)
 - [Yahoo Finance Data](https://github.com/abanadisc/yfinance-iris/blob/main/Yfinance.HistoricalDaily.xml)
 - [Web парсер](https://github.com/acagarcia/zupa)
 - [HTML Parser](https://github.com/eduard93/HTMLParser)
