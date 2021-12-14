@@ -1,14 +1,16 @@
 # Python в InterSystems IRIS 
 
-Embedded Python (далее Python) позволяет использовать язык программирования Python вместе с InterSystems ObjectScript, языком программирования платформы данных InterSystems IRIS. Когда вы создаёте метод в классе InterSystems IRIS, используя Python, исходный код Python компилируется в объектный Python код, который запускается на сервере вместе с компилированным кодом ObjectScript. Это позволяет добиться более тесной интеграции, чем при использовании шлюза [Python Gateway](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=BEXTSERV) или [Native API для Python](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=BPYNAT_intro). Вы также можете импортировать пакеты Python, как собственные, так и общедоступные, и использовать их в коде ObjectScript. Объекты Python могут быть свободно использованы в ObjectScript и наоборот.
+На платформе InterSystems IRIS появился новый язык реализации бизнес-логики – Python. Теперь разработчики со знанием Python могут создавать на InterSystems IRIS высоконагруженные приложения, решать задачи интеграции приложений, управления API, и аналитики, в том числе и с использованием технологий машинного обучения. Начиная с версии InterSystems IRIS 2021.2 вы можете использовать Embedded Python (далее Python) для разработки методов классов.
+
+Когда вы создаёте метод в классе InterSystems IRIS на языке Python, исходный код компилируется в объектный Python-код, который запускается на сервере вместе с компилированным кодом InterSystems ObjectScript. Объекты Python могут быть свободно использованы в ObjectScript и наоборот. Также появляется возможность импортировать пакеты Python, как собственные, так и общедоступные, и использовать их в коде на InterSystems ObjectScript. Embedded Python дополняет ранее доступные интерфейсы InterSystems IRIS для Python: [Python Gateway](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=BEXTSERV) и [Native API для Python](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=BPYNAT_intro).
 
 В этой статье мы рассмотрим следующие сценарии:
 
-- Использование Python-библиотек из ObjectScript - этот сценарий предполагает, что вы являетесь разработчиком ObjectScript и хотите использовать возможности многочисленных библиотек Python, которые доступны сообществу разработчиков Python.
-- Вызов API InterSystems IRIS из Python - этот сценарий предполагает, что вы являетесь разработчиком Python, который только начинает работать с InterSystems IRIS, и хотите узнать, как получить доступ к InterSystems IRIS.
+- Использование Python-библиотек из ObjectScript - этот сценарий предполагает, что вы являетесь разработчиком на ObjectScript и хотите использовать возможности многочисленных библиотек Python, которые доступны сообществу разработчиков Python.
+- Вызов API InterSystems IRIS из Python - этот сценарий предполагает, что вы являетесь разработчиком на Python, который только начинает работать с InterSystems IRIS, и хотите узнать, как получить доступ к InterSystems IRIS.
 - Совместное использование ObjectScript и Python - этот сценарий предполагает, что вы работаете в смешанной команде разработчиков на ObjectScript и Python и хотите узнать, как использовать эти два языка вместе.
 
-Для воспроизведения примеров из статьи вам понадобится InterSystems IRIS версии 2021.2+. 
+Для воспроизведения примеров из статьи вам понадобится InterSystems IRIS версии 2021.2+. Скачать IRIS версии 2021.2+ можно на [WRC](https://wrc.intersystems.com/wrc/coDistIRIS.csp) или из Docker Hub: `docker pull store/intersystems/iris-community:2021.2.0.617.0`.
 
 Некоторые примеры в этой статье используют классы из репозитория [Samples-Data](https://github.com/intersystems/Samples-Data). Рекомендуем создать область `SAMPLES` и загружать примеры туда. Если вы хотите просмотреть или изменить код примера, вам необходимо установить интегрированную среду разработки (IDE). Рекомендуется использовать Visual Studio Code.
 
@@ -32,7 +34,7 @@ C:\InterSystems\IRIS\bin\irispip install --target C:\InterSystems\IRIS\mgr\pytho
 
 ## Импорт пакета Python
 
-Класс [%SYS.Python](https://docs.intersystems.com/iris20212/csp/documatic/%25CSP.Documatic.cls?&LIBRARY=%25SYS&CLASSNAME=%25SYS.Python) содержит методы, необходимую для использования Python из ObjectScript. Вы можете использовать `%SYS.Python` в любом контексте ObjectScript, например, в классах, интерактивных терминальных сессиях или SQL процедурах. 
+Класс [%SYS.Python](https://docs.intersystems.com/iris20212/csp/documatic/%25CSP.Documatic.cls?&LIBRARY=%25SYS&CLASSNAME=%25SYS.Python) содержит методы, необходимую для использования Python из ObjectScript. Вы можете использовать `%SYS.Python` в любом контексте ObjectScript, например, в классах, интерактивных терминальных сессиях или SQL-процедурах. 
 
 Чтобы импортировать пакет или модуль Python из ObjectScript, используйте метод `%SYS.Python:Import()`.
 
@@ -203,7 +205,7 @@ Name: Acme Widgets, Inc. TaxID: 123456789
 
 ### SQL
 
-Классы в InterSystems IRIS доступны как SQL таблицы (подробнее о взаимосвязи классов, таблиц и глобалов можно почитать [здесь](https://community.intersystems.com/post/classes-tables-and-globals-how-it-all-works)), позволяя вам получать доступ к данным с помощью SQL запросов, в дополнение к использованию методов классов или прямого доступа к глобалам. Модуль `iris` предоставляет возможность выполнять SQL запросы к InterSystems IRIS из Python.
+Классы в InterSystems IRIS доступны как SQL-таблицы (подробнее о взаимосвязи классов, таблиц и глобалов можно почитать [здесь](https://community.intersystems.com/post/classes-tables-and-globals-how-it-all-works)), позволяя вам получать доступ к данным с помощью SQL запросов, в дополнение к использованию методов классов или прямого доступа к глобалам. Модуль `iris` предоставляет возможность выполнять SQL запросы к InterSystems IRIS из Python.
 
 В следующем примере используется `iris.sql.prepare` для запуска SQL запроса, возвращающего все компании, название которых начинается на `A` (используйте метод `dataframe` для получения pandas dataframe):
 
@@ -217,7 +219,7 @@ Name: Acme Widgets, Inc. TaxID: 123456789
 [0]: [Acme Widgets, Inc.', 123456789]
 ```
 
-### SQL процедуры, триггеры
+### SQL-процедуры, триггеры
 
 Любой метод класса InterSystems IRIS может быть доступен из SQL. Для этого добавьте [SQLProc](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=ROBJ_method_sqlproc) в ключевые слова метода.
 
@@ -238,7 +240,7 @@ CREATE FUNCTION tzconvert(dt DATETIME, tzfrom VARCHAR, tzto VARCHAR)
 }
 ```
 
-Вызовем эту SQL процедуру, преобразующую дату/время из московского времени во всемирное координированное время (UTC).
+Вызовем эту SQL-процедуру, преобразующую дату/время из московского времени во всемирное координированное время (UTC).
 
 ```sql
 SELECT tzconvert(now(), 'Europe/Moscow', 'UTC')
@@ -274,7 +276,7 @@ Wednesday
 
 InterSystems IRIS облегчает совместную работу смешанных команд программистов на ObjectScript и Python. Например, некоторые методы в классе могут быть написаны на ObjectScript, а некоторые - на Python. Программисты могут выбрать язык, на котором им удобнее всего писать, или язык, который больше подходит для решения поставленной задачи.
 
-### Создание смешанных классов InterSystems IRIS
+### Создание классов с кодом и на Python, и на InterSystems ObjectScript
 
 Следующий класс имеет метод `Print`, написанный на Python, и метод `Write`, написанный на ObjectScript, но функционально они эквивалентны, и любой из методов может быть вызван из Python или ObjectScript.
 
@@ -709,7 +711,7 @@ Cannot divide by zero
 
 ### Сигналы
 
-И IRIS, и Python регистрируют обработчики сигналов для обеспечения надлежащей интеграции с операционной системой, однако иногда они могут конфликтовать. В идеале, мы должны работать с обработчиками сигналов IRIS во время выполнения кода IRIS и переходить на обработчики сигналов Python во время выполнении кода Python. Бенчмаркинг показал, что вызовы `sigaction`/`signal` являются достаточно дорогими, поэтому по умолчанию мы оставляем обработчики сигналов IRIS. Это означает, что для долго работающего метода Python, Ctrl-C не будет передан.
+И InterSystems IRIS, и Python регистрируют обработчики сигналов для обеспечения надлежащей интеграции с операционной системой, однако иногда они могут конфликтовать. В идеале, мы должны работать с обработчиками сигналов IRIS во время выполнения кода IRIS и переходить на обработчики сигналов Python во время выполнении кода Python. Бенчмаркинг показал, что вызовы `sigaction`/`signal` являются достаточно дорогими, поэтому по умолчанию мы оставляем обработчики сигналов IRIS. Это означает, что для долго работающего метода Python, Ctrl-C не будет передан.
 
 Если вам необходимо, чтобы при вызове метода Python была включена обработка сигналов Python, вы можете использовать метод `$system.Python.ChangeSignalState`:
 
