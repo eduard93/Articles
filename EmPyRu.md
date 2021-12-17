@@ -620,7 +620,7 @@ apple
 
 ### Лямбды
 
-В Python в отличии от InterSystems ObjectScript функции являются объектами первого класса (т.е. могут быть переданы как параметр, возвращены из функции, присвоены переменной). В случае если метод Python принимает как один из аргументов лямбда-выражение, корректно сформировать его можно следующим образом ([пример вызова)[https://github.com/eduard93/kafka-empy-demo/blob/master/iris/src/dc/KafkaConsumer.cls#L35]): 
+В Python в отличии от InterSystems ObjectScript функции являются объектами первого класса (т.е. могут быть переданы как параметр, возвращены из функции, присвоены переменной). В случае если метод Python принимает как один из аргументов лямбда-выражение, корректно сформировать его можно следующим образом ((пример вызова)[https://github.com/eduard93/kafka-empy-demo/blob/master/iris/src/dc/KafkaConsumer.cls#L35]): 
 
 ```objectscript
 ClassMethod GetLambda() As %SYS.Python [ Language = python ]
