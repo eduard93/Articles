@@ -271,4 +271,104 @@ Record Mapper записей работает с простыми записям
 
 # Глобалы
 
-Этот подход за
+Этот подход использует возможности InterSystems IRIS как [мультимодельной базы данных](https://community.intersystems.com/post/classes-tables-and-globals-how-it-all-works). 
+Подход заключается в:
+
+1. Создании хранимого класса со схемой хранения аналогичной CSV файлу.
+2. Написанию метода `Import`.
+
+Приведу небольшой пример. Допустим у нас есть CSV с точками - двумя колонками X и Y:
+
+```csv
+X,Y
+1,4
+7,0
+```
+
+Создадим класс:
+
+```objectscript
+Class try.Point Extends %Persistent
+{
+Property X As %Integer;
+Property Y As %Integer;
+}
+```
+
+Аналогичный класс можно создать с помощью SQL:
+
+```sql
+CREATE Table try.Point (X INT, Y INT)
+```
+
+При компиляции класса `try.Point` будет создано определение хранилища - маппинг между глобалами и объектной и реляционной моделями:
+
+```
+Storage Default
+{
+<Data name="PointDefaultData">
+    <Value name="1">
+        <Value>%%CLASSNAME</Value>
+    </Value>
+    <Value name="2">
+        <Value>X</Value>
+    </Value>
+    <Value name="3">
+        <Value>Y</Value>
+    </Value>
+</Data>
+<DataLocation>^try.PointD</DataLocation>
+<DefaultData>PointDefaultData</DefaultData>
+<IdLocation>^try.PointD</IdLocation>
+<IndexLocation>^try.PointI</IndexLocation>
+<StreamLocation>^try.PointS</StreamLocation>
+<Type>%Library.CacheStorage</Type>
+}
+```
+
+Нам здесь интереснен `DataLocation` - глобал, в котором хранятся данные (`^try.PointD`) и `PointDefaultData` определяющая порядок хранения полей. В нашем случае поля 3:
+
+- 1 - %%CLASSNAME
+- 2 - X
+- 3 - Y
+
+Записи в глобале должны соответствовать данной структуре:
+
+```objectscript
+^try.PointD(id) = $lb("", X, Y)
+```
+
+Теперь напишем метод метод `Import`:
+
+```objectscript
+ClassMethod Import(file) As %Status
+{
+  #dim sc As %Status = $$$OK
+  set stream = ##class(%Stream.FileCharacter).%New()
+  set sc = stream.LinkToFile(file)
+  quit:$$$ISERR(sc) sc
+  
+  while 'stream.AtEnd {
+    set line = stream.ReadLine()
+    set ^try.PointD($i(^try.PointD)) = $lb("") _ $lfs(line, ",")
+  }
+  kill stream
+  
+  quit sc
+}
+```
+
+Конечно, метод может быть намного сложнее и включать конверсию и валидацию данных и т.п., но общей смысл думаю ясен.
+
+Преимуществом данного подхода является скорость вставки данных.
+
+# Выводы
+
+[LOAD DATA](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=RSQL_loaddata) позволяет легко импортировать CSV файлы в хранимые таблицы InterSystems IRIS.
+
+# Ссылки
+
+- [LOAD DATA](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=RSQL_loaddata) 
+- [%SQL_Util](https://docs.intersystems.com/irislatest/csp/documatic/%25CSP.Documatic.cls?LIBRARY=%25SYS&CLASSNAME=%25SQL.Util.Procedures#CSVTOCLASS) 
+- [Record Mapper](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=EGDV_recmap)
+- [Конкурс наборов данных](https://openexchange.intersystems.com/contest/20), на котором представлено много примеров работы с LOAD DATA
