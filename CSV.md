@@ -267,6 +267,13 @@ Record Mapper записей работает с простыми записям
 
 ![image](https://user-images.githubusercontent.com/5127457/149316433-aca54845-2a03-4c39-95f1-40b901df3119.png)
 
+# Мастер импорта/экспорта SQL данных
+
+[Мастер импорта/экспорта SQL данныx](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GSQL_impexp) - графический инструмент для интерактивного импорта данных из CSV файлов в хранимые таблицы InterSystems IRIS.
+
+![image](https://user-images.githubusercontent.com/5127457/149322467-9fe04261-9771-404d-b63c-b5fa364584e6.png)
+
+
 # Глобалы
 
 Этот подход использует возможности InterSystems IRIS как [мультимодельной базы данных](https://community.intersystems.com/post/classes-tables-and-globals-how-it-all-works). 
@@ -368,4 +375,5 @@ ClassMethod Import(file) As %Status
 - [LOAD DATA](https://docs.intersystems.com/iris20212/csp/docbook/DocBook.UI.Page.cls?KEY=RSQL_loaddata) 
 - [%SQL_Util](https://docs.intersystems.com/irislatest/csp/documatic/%25CSP.Documatic.cls?LIBRARY=%25SYS&CLASSNAME=%25SQL.Util.Procedures#CSVTOCLASS) 
 - [Record Mapper](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=EGDV_recmap)
+- [Мастер импорта/экспорта SQL данныx](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GSQL_impexp) 
 - [Конкурс наборов данных](https://openexchange.intersystems.com/contest/20), на котором представлено много примеров работы с LOAD DATA
