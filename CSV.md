@@ -82,7 +82,7 @@ INTO MyTable(field1,field3) VALUES (head2,head5)
 Пример вызова LOAD DATA со всеми настройками:
 
 ```sql
-LOAD DATA FROM FILE 'C://TEMP/mydata.txt' 
+LOAD DATA FROM FILE '/tmp/mydata.csv' 
 INTO Sample.Employees
 USING {
 	"from": {
