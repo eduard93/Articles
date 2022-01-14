@@ -42,7 +42,7 @@ INTO table [ (fieldname, fieldname2, ...)
 Вот пример команды LOAD DATA:
 
 ```sql
-LOAD DATA FROM FILE 'C://TEMP/mydata.txt' 
+LOAD DATA FROM FILE '/tmp/mydata.csv' 
 INTO MyTable
 ```
 
@@ -50,7 +50,7 @@ INTO MyTable
 Поэтому в большинстве случаев следует явно указывать колонки, например:
 
 ```sql
-LOAD DATA FROM FILE 'C://TEMP/mydata.txt' 
+LOAD DATA FROM FILE '/tmp/mydata.csv' 
 COLUMNS (head1 INT,head2 VARCHAR(20),head3 INT,head4 VARCHAR(20),head5 INT)
 INTO MyTable(field1,field3) VALUES (head2,head5)
 ```
@@ -111,7 +111,7 @@ Frank Rogers,Administration,USA,Cambridge,1 Memorial Drive
 Чтобы указать, что файл данных имеет строку заголовка, используйте параметр header, как показано в следующем примере:
 
 ```sql
-LOAD DATA FROM FILE 'C://TEMP/mydata.txt' 
+LOAD DATA FROM FILE '/tmp/mydata.csv' 
 INTO Sample.Employees
 USING {"from":{"file":{"header":"1"}}}
 ```
@@ -123,7 +123,7 @@ USING {"from":{"file":{"header":"1"}}}
 Если вы установили параметр `header` равным 1, вы можете дополнительно установить параметр `skip` - целое число. Параметр `skip` пропускает дополнительные строки, следующие непосредственно за заголовком. В следующем примере не загружаются первые 3 строки файла данных (строка заголовка и 2 дополнительные пропущенные строки):
 
 ```sql
-LOAD DATA FROM FILE 'C://TEMP/mydata.txt' 
+LOAD DATA FROM FILE '/tmp/mydata.csv' 
 INTO Sample.Employees
 USING {"from":{"file":{"header":"1","skip":"2"}}}
 ```
@@ -133,7 +133,7 @@ USING {"from":{"file":{"header":"1","skip":"2"}}}
 Если значения заголовка совпадают с именами полей таблицы, то `LOAD DATA` автоматически сопоставляет элементы файла данных с соответствующими полями таблицы. Например, если последовательность заголовков - `Department,Name,Country,City,StreetAddress`, а последовательность полей таблицы - `Name,Department,StreetAddress,City,Country`, то следующий пример сопоставляет столбцы заголовков с соответствующими полями таблицы:
 
 ```sql
-LOAD DATA FROM FILE 'C://TEMP/mydata.txt' 
+LOAD DATA FROM FILE '/tmp/mydata.csv' 
 INTO Sample.Employees
 USING {"from":{"file":{"header":"1"}}}
 ```
@@ -141,7 +141,7 @@ USING {"from":{"file":{"header":"1"}}}
 Если же значения заголовков не совпадают с именами полей таблицы для `LOAD DATA` требуется условие `COLUMNS`, чтобы сопоставить элементы файла данных с соответствующими полями таблицы. Например, если последовательность заголовков - `Dept,FullName,Nation,City,Street`, а последовательность полей таблицы - `Name,Department,StreetAddress,City,Country`, то следующий пример сопоставляет столбцы файла с соответствующими полями таблицы:
 
 ```sql
-LOAD DATA FROM FILE 'C://TEMP/mydata.txt' 
+LOAD DATA FROM FILE '/tmp/mydata.csv' 
 COLUMNS (Department VARCHAR(40),Name VARCHAR(40)),Country VARCHAR(20),City VARCHAR(20),StreetAddress VARCHAR(20)) 
 INTO Sample.Employees
 USING {"from":{"file":{"header":"1"}}}
@@ -204,7 +204,7 @@ SELECT * FROM %SQL_Diag.Message WHERE severity = 'error'
 [SQL процедура](https://docs.intersystems.com/irislatest/csp/documatic/%25CSP.Documatic.cls?LIBRARY=%25SYS&CLASSNAME=%25SQL.Util.Procedures#CSV) для быстрого просмотра CSV файлов. Также применяется в случаях, когда требуются многочисленные манипуляции с исходными данными или исходные данные хранятся в потоке а не в файле. Например
 
 ```
-CALL %SQL_Util.CSV(,'ROW(MYID VARCHAR(10000), FIXED VARCHAR(10000))','C://TEMP/mydata.txt',';',,'CP1251')
+CALL %SQL_Util.CSV(,'ROW(MYID VARCHAR(10000), FIXED VARCHAR(10000))','/tmp/mydata.csv',';',,'CP1251')
 ```
 
 Процедура принимает следующие параметры:
@@ -242,7 +242,7 @@ CALL %SQL_Util.CSV(,'ROW(MYID VARCHAR(10000), FIXED VARCHAR(10000))','C://TEMP/m
 
 ```objectscript
 set rowtype = "State VARCHAR(2),Zip_Code VARCHAR(5),State_Abbr VARCHAR(2),Name VARCHAR(200),Longitude_West Numeric(10,6),Latitude_North Numeric(10,6)"
-set filename = "/Users/test/Documents/zip.csv"
+set filename = "/tmp/mydata.csv"
 set result = ##class(%SQL.Statement).%ExecDirect(,"call %SQL_Util.CSV(,?,?)",.rowtype,.filename)
 set resultSet = result.%NextResult()
 write resultSet.%Next()
