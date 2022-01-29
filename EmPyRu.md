@@ -10,7 +10,7 @@
 - Вызов API InterSystems IRIS из Python - этот сценарий предполагает, что вы являетесь разработчиком на Python, который только начинает работать с InterSystems IRIS, и хотите узнать, как получить доступ к InterSystems IRIS.
 - Совместное использование ObjectScript и Python - этот сценарий предполагает, что вы работаете в смешанной команде разработчиков на ObjectScript и Python и хотите узнать, как использовать эти два языка вместе.
 
-Для воспроизведения примеров из статьи вам понадобится InterSystems IRIS версии 2021.2+. Скачать IRIS версии 2021.2+ можно на [WRC](https://wrc.intersystems.com/wrc/coDistIRIS.csp) или можно использовать Docker: `docker pull containers.intersystems.com/intersystemscorp/iris-community:2021.2.0.649.0`.
+Для воспроизведения примеров из статьи вам понадобится InterSystems IRIS версии 2021.2+. Скачать IRIS версии 2021.2+ можно на [WRC](https://wrc.intersystems.com/wrc/coDistIRIS.csp) или можно использовать Docker: `docker pull containers.intersystems.com/intersystems/iris-community:2021.2.0.649.0`.
 
 Некоторые примеры в этой статье используют классы из репозитория [Samples-Data](https://github.com/intersystems/Samples-Data). Рекомендуем создать область `SAMPLES` и загружать примеры туда. Если вы хотите просмотреть или изменить код примера, вам необходимо установить интегрированную среду разработки (IDE). Рекомендуется использовать Visual Studio Code.
 
