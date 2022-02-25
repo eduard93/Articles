@@ -6,6 +6,14 @@ I would also describe several tricks, which might come useful.
 
 # Data model
 
+The main difference with tha data model (comperad to the normal table or chart reports) is that you need to use queries of a different cardinality together.
+
+In our example we will use two tables - customers and items. We will create a billing report, where each customer has a separate bill and each bill has a varying number of items.
+
+Here's our data model:
+
+
+
 N queries - 1 base query and items queries.
 
 # Connecting item queries
