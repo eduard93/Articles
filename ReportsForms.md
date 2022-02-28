@@ -117,6 +117,18 @@ New table inside the banded object:
 
 ![image](https://user-images.githubusercontent.com/5127457/156054760-17032186-f1ab-4332-a5b0-8e44b4ca6ab0.png)
 
+But if you display it as is it would show all orders for every client. To prevent that press RMB on a orders table and choose `Data Container Link...` option:
+
+![image](https://user-images.githubusercontent.com/5127457/156055374-b5d3d4f6-1ff0-41ba-8420-9a07bdd47a08.png)
+
+In there link Client ID and Order Client:
+
+![image](https://user-images.githubusercontent.com/5127457/156055465-09f3a22b-ccd3-4a68-9bf3-79f853c4d4aa.png)
+
+Now our bill displays only Orders for a current client:
+
+![image](https://user-images.githubusercontent.com/5127457/156055557-a3e5d0ed-93e0-4901-b434-da4e6ff30426.png)
+
 
 
 ## Several data panes and overlap
