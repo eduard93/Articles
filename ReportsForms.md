@@ -129,13 +129,29 @@ Now our bill displays only Orders for a current client:
 
 ![image](https://user-images.githubusercontent.com/5127457/156055557-a3e5d0ed-93e0-4901-b434-da4e6ff30426.png)
 
+That's pretty much it. Next let's discuss some tricks.
+
+# Formulas
+
+## Builtins and isibility
+
+Most properties can be set to formulas as opposed to constants. For example, our client may have only one billing option and we need to hide a corresponding QR code if the billing option value is empty. To do that set `Invisible` property to `IsNull(@BillingOptionB)` (press `Fx` to enter a formula, [list of supported functions](https://reportkbase.logianalytics.com/designer16/userguide/index.htm#t=HTML%2Fappendix%2Fapdx_fctn.htm)):
+
+![image](https://user-images.githubusercontent.com/5127457/156154786-801b250f-cea1-4c6d-a494-28938b7fceb5.png)
+
+This way if the value of `BillingOptionB` is null (or empty string as the case may be), the QR code is not displayed at all.
+
+## Custom and alignment
+
+Next let's align Address string to take more space if `BillingOptionB` QR code is not displayed. There's no ready made function for that, so we need to write our own. The language of choice here is Java. Press `<New Formula...>` button and enter `if (IsNull(@BillingOptionB)) then return 3.72 else return 2.72`:
+
+![image](https://user-images.githubusercontent.com/5127457/156157740-891261af-8c76-47e9-8da5-657a37873d48.png)
+
+
 
 
 ## Several data panes and overlap
 
-# Formulas
-
-## Builtins and Java
 
 ## Example: visibility
 
