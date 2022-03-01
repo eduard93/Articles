@@ -2,7 +2,7 @@
 
 Recently I needed to to create a report in InterSystems Reports, which was not the usual _table_, but rather a form, to be specific a bill (but it does not matter that it was a bill specifically, just that it was not a _table_ or a _chart_). This article deals with the case where you need to create a report which is an invoice a bill or something of a similar nature. 
 
-I would also describe several tricks, which might come useful.
+I would also describe several tricks, which might come useful. This article assumes familiarity with InterSystems Reports Designer. Check out [Getting Started with InterSystems Reports](https://learning.intersystems.com/course/view.php?id=1538) if you want to learn the basics of creating reports in InterSystems Reports Designer. 
 
 # Report types
 
@@ -60,7 +60,7 @@ So to start with we need to create 1 base query (clients) and 1 subquery (items)
 
 # Running an example
 
-If you want to get a running demo, you can either start this project in [Docker](https://github.com/eduard93/reports)
+If you want to get a running demo, you can either start this project in [Docker](https://github.com/eduard93/reports).
 
 1. Load `iris.xml` into InterSystems IRIS
 2. Execute:
@@ -117,7 +117,7 @@ New table inside the banded object:
 
 ![image](https://user-images.githubusercontent.com/5127457/156054760-17032186-f1ab-4332-a5b0-8e44b4ca6ab0.png)
 
-But if you display it as is it would show all orders for every client. To prevent that press RMB on a orders table and choose `Data Container Link...` option:
+But if you display it as is it would show all orders for every client. To prevent that press 🖱️ RMB on the orders table and choose `Data Container Link...` option:
 
 ![image](https://user-images.githubusercontent.com/5127457/156055374-b5d3d4f6-1ff0-41ba-8420-9a07bdd47a08.png)
 
@@ -133,32 +133,62 @@ That's pretty much it. Next let's discuss some tricks.
 
 # Formulas
 
-## Builtins and isibility
+Formaulas is a powerful instrument allowing arbitrary computations over base query properties. 
 
-Most properties can be set to formulas as opposed to constants. For example, our client may have only one billing option and we need to hide a corresponding QR code if the billing option value is empty. To do that set `Invisible` property to `IsNull(@BillingOptionB)` (press `Fx` to enter a formula, [list of supported functions](https://reportkbase.logianalytics.com/designer16/userguide/index.htm#t=HTML%2Fappendix%2Fapdx_fctn.htm)):
+## Builtins
+
+Most properties can be set to formulas as opposed to constants. For example, our client may have only one billing option and we need to hide a corresponding QR code if the billing option value is empty. To do that set `Invisible` property to `IsNull(@BillingOptionB)` (press `Fx` to enter a formula, [list of supported functions](https://reportkbase.logianalytics.com/designer16/userguide/index.htm#t=HTML%2Fappendix%2Fapdx_fctn.htm), also available in Formula wizard):
 
 ![image](https://user-images.githubusercontent.com/5127457/156154786-801b250f-cea1-4c6d-a494-28938b7fceb5.png)
 
 This way if the value of `BillingOptionB` is null (or empty string as the case may be), the QR code is not displayed at all.
 
-## Custom and alignment
+## Custom
 
-Next let's align Address string to take more space if `BillingOptionB` QR code is not displayed. There's no ready made function for that, so we need to write our own. The language of choice here is Java. Press `<New Formula...>` button and enter `if (IsNull(@BillingOptionB)) then return 3.72 else return 2.72`:
+Next let's align Address string to take more space if `BillingOptionB` QR code is not displayed. There's no ready made function for that, so we need to write our own. The language of choice here is Java. Press `<New Formula...>` button and create a new formula named `WidthFormula` with this code `if (IsNull(@BillingOptionB)) then return 3.72 else return 2.72`:
 
 ![image](https://user-images.githubusercontent.com/5127457/156157740-891261af-8c76-47e9-8da5-657a37873d48.png)
 
+And set it as Width value in address:
+
+![image](https://user-images.githubusercontent.com/5127457/156166662-c6c36d97-68d9-4382-ba92-9acbe4adfcd1.png)
+
+Now render for ClientA and ClientB would look like this:
+
+![image](https://user-images.githubusercontent.com/5127457/156166730-b76d9ecf-7b7f-4661-8d3e-b8ff2aeba68d.png)
+
+![image](https://user-images.githubusercontent.com/5127457/156166754-148a78d1-ca3d-406a-a4bd-03845e62e4af.png)
+
+Note that address now takes all availiable space.
 
 
+# Several data panes
 
-## Several data panes and overlap
+What if we need two tables, one after the other? In that case we need to add another Detail Panel. Press 🖱️ RMB on existing Detail panel and click `Insert Panel After`. 
+After that add a table to a second Detail Panel.
 
+![image](https://user-images.githubusercontent.com/5127457/156169355-81e5f9dd-1925-4ed0-8dec-7a1f7f58777c.png)
 
-## Example: visibility
+Tables do not overlap:
 
-## Example: length
+![image](https://user-images.githubusercontent.com/5127457/156169668-e60e0a20-2ed1-4d51-8667-3cda824716d9.png)
 
 # Vertical text
+
+If you want to add vertical text (actually any non-horizontal text) do by adding a UDO component of a JRptator type:
+
+![image](https://user-images.githubusercontent.com/5127457/156169824-318aeb95-3f8c-4816-80d4-f92ea0a2ef0b.png)
+
+And set it's `Rotate` property to `-90`:
+
+![image](https://user-images.githubusercontent.com/5127457/156169948-ffe7a394-061a-414e-a4b0-c4f017920f4c.png)
+
 
 # Summary
 
 # Links
+
+- [Getting Started with InterSystems Reports](https://learning.intersystems.com/course/view.php?id=1538)
+- [Running InterSystems Reports in containers](https://community.intersystems.com/post/running-intersystems-reports-containers)
+- [Repository](https://github.com/eduard93/reports)
+- [List of supported functions](https://reportkbase.logianalytics.com/designer16/userguide/index.htm#t=HTML%2Fappendix%2Fapdx_fctn.htm)
