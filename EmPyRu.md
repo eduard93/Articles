@@ -771,7 +771,33 @@ do ps."print_stats"()
 
 ### Интеграционные решения
 
-Если вы разрабатываете собственные классы бизнес-хостов или адаптеров для интеграционных решений InterSystems IRIS, любые коллбэк методы (такие как `OnProcessInput` или `OnInit`) должны быть написаны на ObjectScript. Код ObjectScript может, использовать библиотеки Python или вызывать другие методы, реализованные полностью на Python. 
+Если вы разрабатываете собственные классы бизнес-хостов или адаптеров для интеграционных решений InterSystems IRIS, все методы, включая любые коллбэк методы (такие как `OnProcessInput` или `OnInit`) могут быть написаны на Python. Например:
+
+```objectscript
+Class dc.DFOperation Extends Ens.BusinessOperation
+{
+
+Method OnMessage(ByRef request As Ens.StringContainer, Output response As Ens.Response) As %Status [ Language = python ]
+{
+    import pandas
+    import iris
+
+    query = request.value.StringValue
+    response.value = iris.cls('Ens.Response')._New()
+    
+    stmt = iris.sql.prepare(query)
+    rs = stmt.execute()
+    df = rs.dataframe()
+    
+    iris.cls('Ens.Util.Log').LogInfo("dc.DFOperation", "OnMessage", "Dataframe load success")
+    
+    return iris.cls('%SYSTEM.Status').OK()
+}
+
+}
+```
+
+Отмечу, что переменные request и response передаются как ссылочные аргументы (см. выше), имейте это в виду при работе с ними - значение находится в свойстве `value`. Для `request` не рекомендуется изменять свойство `value`. Также отмечу что импорт модулей хоть и происходит каждый раз при вызове `OnMessage`, после первого раза во время жизни процесса это дещёвая операция. В случае если это не так, используйте свойства класса для хранения ссылок на модули между вызовами `OnMessage` ([пример](https://github.com/intersystems-community/OpcUA-empy/blob/master/iris/src/dc/opcua/SMS.cls#L8)). 
 
 Дополнительно, при разработке BP/BPL процессов помните что:
 - Необходимо сохранять все нужные вам объекты между состояниями как свойства контекста.
