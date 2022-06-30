@@ -20,7 +20,7 @@ which allows you to call any ObjectScript method and get results back.  Import i
 from edpy import iris
 ```
 
-`call` accepts four required arguments:
+`call` accepts 4 required arguments:
 - `iris` - a reference to an established [IRIS object](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=BPYNAT_refapi#BPYNAT_refapi_class-iris)
 - `class_name` - IRIS class to call
 - `method_name` - IRIS method to call
