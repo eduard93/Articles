@@ -172,7 +172,7 @@ Here's how that looks like:
 ## One more thing
 
 There's also a `get_iris(ip="localhost", port=1972, namespace="USER", username="_SYSTEM", password="SYS")` function which gets you a working IRIS object. 
-So here's a complete example, if you want to try it youself:
+So here's a complete example, if you want to try it yourself:
 
 First load the [User.Py class](https://gist.github.com/eduard93/bbc62dbfa3981b5a201e178f61a17572) and install `edpy` python library:
 
@@ -201,6 +201,6 @@ Native SDK for Python is a powerful tool, allowing you complete and unrestricted
 
 # Links
 
-- [Native API Docs](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=BPYNAT_about)
+- [Native SDK Docs](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=BPYNAT_about)
 - [User.Py class](https://gist.github.com/eduard93/bbc62dbfa3981b5a201e178f61a17572)
 - [Repo](https://github.com/eduard93/edpy)
