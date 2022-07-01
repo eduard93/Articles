@@ -196,7 +196,7 @@ ret4 = iris.call(iris_native, "User.Py", "Test4", [["🙂" * 10000000]])
 
 # Conclusion
 
-Native SDK for Python is a powerful tool, allowing you complete and unrestricted access to InterSystems IRIS. I hope this project can save you some time marshaling  InterSystems IRIS calls. Is there some combination of method arguments it does not support? If so, share in the comments how you call them.
+Native SDK for Python is a powerful tool, providing you a complete and unrestricted access to InterSystems IRIS. I hope this project can save you some time marshaling  InterSystems IRIS calls. Is there some combination of method arguments it does not support? If so, share in the comments how you call them.
 
 
 # Links
