@@ -186,6 +186,19 @@ NotifyBecomePrimary() PUBLIC {
 }
 ```
 
+# Initial start
+
+Additionally we need to run the same code on startup. To do that use [^%ZSTART](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GSTU_customize_startstop) routine:
+
+```objectscript
+SYSTEM() PUBLIC {
+  do NotifyBecomePrimary^ZMIRROR()
+  quit 1
+}
+```
+
+# Conclusion
+
 And that's it! In the route table, we get a new route pointing to a current mirror Primary when the `NotifyBecomePrimary` event happens.
 
 ![image](https://user-images.githubusercontent.com/5127457/195042101-32f7851a-0ba7-462d-8e0d-0a68c75097aa.png)
