@@ -41,7 +41,79 @@ sudo ifconfig eth0:1 up
     
 Here's the code:
 
+```py
+import json
+import os
+import urllib.request
+import boto3
+from botocore.exceptions import ClientError
+
+PRIMARY_INTERFACE = 'eth0'
+VIP_INTERFACE = 'eth0:1'
+
+eth0_addresses = [
+    line
+    for line in os.popen(f'ip -4 addr show dev {PRIMARY_INTERFACE}').read().split('\n')
+    if line.strip().startswith('inet')
+]
+
+VIP = None
+for address in eth0_addresses:
+    if address.split(' ')[-1] == VIP_INTERFACE:
+        VIP = address.split(' ')[5]
+
+if VIP is None:
+    raise ValueError('Failed to retrieve a valid VIP!')
+
+# Lookup the current mirror member instance ID
+instanceid = (
+    urllib.request.urlopen('http://169.254.169.254/latest/meta-data/instance-id')
+    .read()
+    .decode()
+)
+
+try:
+    instance_document = (
+        urllib.request.urlopen(
+            'http://169.254.169.254/latest/dynamic/instance-identity/document'
+        )
+        .read()
+        .decode()
+    )
+    region = json.loads(instance_document)['region']
+except KeyError:
+    raise ValueError('Could not extract region from instance metadata!')
+
+session = boto3.Session(region_name=region)
+ec2Resource = session.resource('ec2')
+ec2Client = session.client('ec2')
+instance = ec2Resource.Instance(instanceid)
+
+# Look up the main route table ID for this VPC
+vpc = ec2Resource.Vpc(instance.vpc.id)
+
+for route_table in vpc.route_tables.all():
+    # Update the main route table to point to this instance
+    try:
+        ec2Client.delete_route(
+            DestinationCidrBlock=VIP, RouteTableId=str(route_table.id)
+        )
+    except ClientError as exc:
+        if exc.response['Error']['Code'] == 'InvalidRoute.NotFound':
+            print('Nothing to remove, continue')
+        else:
+            raise exc
+    # Add the new route
+    ec2Client.create_route(
+        DestinationCidrBlock=VIP,
+        NetworkInterfaceId=instance.network_interfaces[0].id,
+        RouteTableId=str(route_table.id),
+    )
 ```
+
+and the same code az ZMIRROR routine:
+
+```objectscript
 NotifyBecomePrimary() PUBLIC {
   try {
     set dir = $system.Util.ManagerDirectory()_ "python"
