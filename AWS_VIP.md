@@ -42,7 +42,6 @@ sudo ifconfig eth0:1 up
 Here's the code:
 
 ```py
-import json
 import os
 import urllib.request
 import boto3
@@ -72,17 +71,11 @@ instanceid = (
     .decode()
 )
 
-try:
-    instance_document = (
-        urllib.request.urlopen(
-            'http://169.254.169.254/latest/dynamic/instance-identity/document'
-        )
-        .read()
-        .decode()
-    )
-    region = json.loads(instance_document)['region']
-except KeyError:
-    raise ValueError('Could not extract region from instance metadata!')
+region = (
+    urllib.request.urlopen('http://169.254.169.254/latest/meta-data/placement/region')
+    .read()
+    .decode()
+)
 
 session = boto3.Session(region_name=region)
 ec2Resource = session.resource('ec2')
@@ -129,8 +122,7 @@ NotifyBecomePrimary() PUBLIC {
     }
     kill boto3
 
-    set code =  "import json" _ $c(10) _
-				"import os" _ $c(10) _
+    set code =  "import os" _ $c(10) _
 				"import urllib.request" _ $c(10) _
 				"import boto3" _ $c(10) _
 				"from botocore.exceptions import ClientError" _ $c(10) _
@@ -153,17 +145,11 @@ NotifyBecomePrimary() PUBLIC {
 				"    .read()" _ $c(10) _
 				"    .decode()" _ $c(10) _
 				")" _ $c(10) _
-				"try:" _ $c(10) _
-				"    instance_document = (" _ $c(10) _
-				"        urllib.request.urlopen(" _ $c(10) _
-				"            'http://169.254.169.254/latest/dynamic/instance-identity/document'" _ $c(10) _
-				"        )" _ $c(10) _
-				"        .read()" _ $c(10) _
-				"        .decode()" _ $c(10) _
-				"    )" _ $c(10) _
-				"    region = json.loads(instance_document)['region']" _ $c(10) _
-				"except KeyError:" _ $c(10) _
-				"    raise ValueError('Could not extract region from instance metadata!')" _ $c(10) _
+				"region = (" _ $c(10) _
+				"    urllib.request.urlopen('http://169.254.169.254/latest/meta-data/placement/region')" _ $c(10) _
+				"    .read()" _ $c(10) _
+				"    .decode()" _ $c(10) _
+				")" _ $c(10) _
 				"session = boto3.Session(region_name=region)" _ $c(10) _
 				"ec2Resource = session.resource('ec2')" _ $c(10) _
 				"ec2Client = session.client('ec2')" _ $c(10) _
