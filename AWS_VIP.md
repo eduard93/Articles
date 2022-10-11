@@ -8,7 +8,7 @@ The main issue, when deploying to AWS, is that an IRIS VIP has a requirement of 
 
 However, to get HA, IRIS mirror members must be deployed to different availability zones, which means different subnets (as subnets can be in only one az). One of the solutions might be load balancers, but they (A) cost money, and (B) if you need to route non-HTTP traffic (think TCP for HL7), you'll have to use Network Load Balancers which have a limit of 50 ports total.
 
-In this article, I would like to provide a way to configure a Mirror VIP without extra AWS resources and a 50 port limitation.
+In this article, I would like to provide a way to configure a Mirror VIP without the use of Network Load Balancing suggested in most other [AWS reference architectures](https://aws-quickstart.github.io/quickstart-intersystems-iris/#_architecture). In production, we have found limitations that impeded solutions with cost, 50 listener limits, DNS dependencies, and the dynamic nature of the two IP addresses AWS provides across the availability zones.
 
 # Architecture
 
