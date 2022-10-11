@@ -192,7 +192,9 @@ Additionally we need to run the same code on startup. To do that use [^%ZSTART](
 
 ```objectscript
 SYSTEM() PUBLIC {
-  do NotifyBecomePrimary^ZMIRROR()
+  if ($SYSTEM.Mirror.IsPrimary() || ('$SYSTEM.Mirror.IsMember()) {
+    do NotifyBecomePrimary^ZMIRROR()
+  }
   quit 1
 }
 ```
