@@ -51,7 +51,8 @@ NotifyBecomePrimary() PUBLIC {
       set boto3 = $system.Python.Import("boto3")
     } catch {
       set sc = $zf(-1, "pip3 install --target " _ dir _ " boto3")
-      set sc = $zf(-1, "pip3 install --target " _ dir _ " dataclasses")
+      // for python before 3.7 
+      // set sc = $zf(-1, "pip3 install --target " _ dir _ " dataclasses")
       set boto3 = $system.Python.Import("boto3")
     }
     kill boto3
