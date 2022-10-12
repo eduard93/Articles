@@ -188,11 +188,11 @@ NotifyBecomePrimary() PUBLIC {
 
 # Initial start
 
-Additionally we need to run the same code on startup. To do that use [^%ZSTART](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GSTU_customize_startstop) routine:
+`NotifyBecomePrimary` is also called automatically on system start (after mirror reconnection), but if you want your non-mirrored environments to acquire VIP the same way use [^%ZSTART](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GSTU_customize_startstop) routine:
 
 ```objectscript
 SYSTEM() PUBLIC {
-  if ($SYSTEM.Mirror.IsPrimary() || ('$SYSTEM.Mirror.IsMember())) {
+  if '$SYSTEM.Mirror.IsMember() {
     do NotifyBecomePrimary^ZMIRROR()
   }
   quit 1
