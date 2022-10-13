@@ -199,6 +199,10 @@ SYSTEM() PUBLIC {
 }
 ```
 
+# Deletion
+
+If you use automated provisioning tools, such as CloudFormation, this route must be deleted before the subnet can be deleted. You can add the deletion code to `^%ZSTOP`, just don't forget to check for `$SYSTEM.Mirror.IsPrimary()` because when mirror primary shuts down, during `^%ZSTOP` it's still primary. Overall I'd recommend external route deletion as a part of a provisioning tools script.
+
 # Conclusion
 
 And that's it! In the route table, we get a new route pointing to a current mirror Primary when the `NotifyBecomePrimary` event happens.
