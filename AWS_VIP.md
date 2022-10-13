@@ -14,7 +14,7 @@ In this article, I would like to provide a way to configure a Mirror VIP without
 
 ![Architecture(2)](https://user-images.githubusercontent.com/5127457/195048823-81285e2a-447e-4d3a-a769-1d89cb50639b.png)
 
-We have a VPC with two private subnets (I simplify here - of course, you'll probably have public subnets, arbiter in another az, and so on, but this is an absolute minimum enough to demonstrate this approach). VPC is allocated IPs: 10.109.10.1 to 10.109.10.254; subnets (in different AZs) are: `10.109.10.1` to `10.109.10.62` and `10.109.10.65` to `10.109.10.126`.
+We have a VPC with two private subnets (I simplify here - of course, you'll probably have public subnets, arbiter in another az, and so on, but this is an absolute minimum enough to demonstrate this approach). VPC is allocated IPs: `10.109.10.1` to `10.109.10.254`; subnets (in different AZs) are: `10.109.10.1` to `10.109.10.62` and `10.109.10.65` to `10.109.10.126`.
 
 # Implementing VIP
 
