@@ -115,9 +115,13 @@ NotifyBecomePrimary() PUBLIC {
     try {
       set boto3 = $system.Python.Import("boto3")
     } catch {
-      set sc = $zf(-1, "pip3 install --target " _ dir _ " boto3")
-      // for python before 3.7 
-      // set sc = $zf(-1, "pip3 install --target " _ dir _ " dataclasses")
+      set cmd = "pip3"
+      set args($i(args)) = "install"
+      set args($i(args)) = "--target"
+      set args($i(args)) = dir
+      set args($i(args)) = "boto3"
+      set sc = $ZF(-100,"", cmd, .args)
+      // for python before 3.7 also install dataclasses
       set boto3 = $system.Python.Import("boto3")
     }
     kill boto3
@@ -176,11 +180,12 @@ NotifyBecomePrimary() PUBLIC {
 
     
     set rc = $system.Python.Run(code)
-
+    set sc = ##class(%SYS.System).WriteToConsoleLog("VIP assignment " _ $case(rc, 0:"successful", :"error"), , $case(rc, 0:0, :1), "NotifyBecomePrimary:ZMIRROR") 
  
   } catch ex {
-    #dim ex As %Exception.SystemException
+    #dim ex As %Exception.General
     do ex.Log()
+    set sc = ##class(%SYS.System).WriteToConsoleLog("Caught exception during VIP assignment: " _ ex.DisplayString(), , 1, "NotifyBecomePrimary:ZMIRROR") 
   }
   quit 1
 }
