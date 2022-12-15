@@ -12,13 +12,14 @@ In this article, I would like to provide a way to configure a Mirror VIP without
 
 # Architecture
 
-![Architecture(2)](https://user-images.githubusercontent.com/5127457/195048823-81285e2a-447e-4d3a-a769-1d89cb50639b.png)
+![Architecture(4)](https://user-images.githubusercontent.com/5127457/207903851-77d73195-a43a-4b49-adec-ae6afdf097a3.png)
 
-We have a VPC with two private subnets (I simplify here - of course, you'll probably have public subnets, arbiter in another az, and so on, but this is an absolute minimum enough to demonstrate this approach). VPC is allocated IPs: `10.109.10.1` to `10.109.10.254`; subnets (in different AZs) are: `10.109.10.1` to `10.109.10.62` and `10.109.10.65` to `10.109.10.126`.
+
+We have a VPC with three private subnets (I simplify here - of course, you'll probably have public subnets, arbiter in another az, and so on, but this is an absolute minimum enough to demonstrate this approach). VPC is allocated IPs: `10.109.10.1` to `10.109.10.254`; subnets (in different AZs) are: `10.109.10.1` to `10.109.10.62`, `10.109.10.65` to `10.109.10.126`, and `10.109.10.224` to `10.109.10.254`.
 
 # Implementing VIP
 
-1. On each EC2 instance, we will allocate the same IP address on the `eth0:1` network interface. This IP address is in the VPC CIDR range but not in any AZ CIDR range. For example, we can use the last IP in a range - `10.109.10.254`:
+1. On each EC2 instance ([SourceDestCheck](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html#cfn-ec2-instance-sourcedestcheck) must be set to false), we will allocate the same IP address on the `eth0:1` network interface. This IP address is in the VPC CIDR range - in a special VIP AZ. For example, we can use the last IP in a range - `10.109.10.254`:
 
 ```
 cat << EOFVIP >> /etc/sysconfig/network-scripts/ifcfg-eth0:1
@@ -29,6 +30,13 @@ cat << EOFVIP >> /etc/sysconfig/network-scripts/ifcfg-eth0:1
           EOFVIP
 sudo chmod -x /etc/sysconfig/network-scripts/ifcfg-eth0:1
 sudo ifconfig eth0:1 up
+```
+
+Depending on the os you might need to run:
+
+```
+ifconfig eth0:1
+systemctl restart network
 ```
 
 2. On mirror failover event, update route table to point to eni on a new Primary. We'll use a [ZMIRROR](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GHA_mirror_set_config#GHA_mirror_set_tunable_params_zmirror_routine) callback to update the routing table after the current mirror member becomes the primary. This code uses Embedded Python to:
