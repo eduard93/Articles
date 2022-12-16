@@ -222,4 +222,6 @@ And that's it! In the route table, we get a new route pointing to a current mirr
 
 ![image](https://user-images.githubusercontent.com/5127457/195042101-32f7851a-0ba7-462d-8e0d-0a68c75097aa.png)
 
-The author would like to thank Jared Trog and Ron Sweeny for creating this approach.
+The author would like to thank Jared Trog and @Ron.Sweeney8792 for creating this approach.
+
+The author would like to thank @Tomohiro.Iwamoto for testing this approach and figuring out all the requirements for it to work.
