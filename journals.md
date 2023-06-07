@@ -16,11 +16,7 @@ Let's try to change something. In my terminal, I'll run `set ^a=123`, and here's
 
 ![image](https://github.com/eduard93/Articles/assets/5127457/d5fa942f-41f5-47f1-ab18-e3ef95ff1c06)
 
-We can see some basic parameters such as type, global, and db, but to see all properties, click on the Offset value:
-
-![image](https://github.com/eduard93/Articles/assets/5127457/f17ced75-da01-406c-b7b5-1a4e423fa89b)
-
-You should see something like this:
+We can see some basic parameters such as type, global, and db, but to see all properties, click on the Offset value. You should see something like this:
 
 ![image](https://github.com/eduard93/Articles/assets/5127457/2a78f6d4-8075-4b5e-ab73-55605741d36a)
 
