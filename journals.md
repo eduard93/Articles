@@ -171,7 +171,7 @@ do ##class(Ens.Config.Production).%KillExtent()
 
 2. Run `set` commands we got from journals (possibly adjusting them depending on your requirements).
 3. Reconstruct the class:
-```
+```objectscript
 do ##class(Ens.Config.Item).%BuildIndices()
 set prodname = "User.Production"
 set prod = ##class(Ens.Config.Production).%OpenId(prodname)
