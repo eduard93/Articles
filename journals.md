@@ -132,7 +132,7 @@ WHERE 1=1 AND
 
 However, SQL does not display `$lb` structures, so we need to rewrite our query as code:
 
-```
+```objectscript
 ClassMethod ScanEns()
 {
     Set FilePath = "c:\intersystems\iris\mgr\journal\20230607.002"
