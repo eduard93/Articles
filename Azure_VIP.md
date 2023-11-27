@@ -116,7 +116,7 @@ NotifyBecomePrimary() PUBLIC {
 }
 ```
 
-The routine is the same for both mirror members, we just swap the NIC names based on a current mirror member name.
+The routine is the same for both mirror members, we just swap the NIC names based on a current mirror member name. You might not need `export AZURE_CONFIG_DIR=/tmp`, but sometimes `az` tries to write credentials into the root home dir, which might fail. Instead of `/tmp`, it's better to use the IRIS user's home subdirectory (or you might not even need that environment variable, depending on your setup). 
 
 And if you want to use Embedded Python, here's Azure Python SDK code:
 
