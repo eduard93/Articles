@@ -50,7 +50,7 @@ ifconfig eth0:1
 systemctl restart network
 ```
 4. For each VM, enable [System or User assigned identity](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/managed-identity-best-practice-recommendations).
-5. For each identity, assign the permissions to modify Network Interfaces. It should be a [Network Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#network-contributor) on the resource group if you want to go with system roles (or your subscription does not allow custom roles). Preferably, however, you can create custom roles; the minimum permission set in that case would be:
+5. For each identity, assign the permissions to modify Network Interfaces. To do that create a [custom role](https://learn.microsoft.com/en-us/azure/role-based-access-control/custom-roles), the minimum permission set in that case would be:
 ```json
 {
   "roleName": "custom_nic_write",
@@ -72,7 +72,7 @@ systemctl restart network
 }
 ```
 
-You might also need to grant `Microsoft.Network/networkInterfaces/read`.
+You might also need to grant `Microsoft.Network/networkInterfaces/read`. For non-production environments you might use a [Network Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#network-contributor) system role on the resource group, but that is not a recommended approach as Network Contributor is a very broad role.
 
 6. Each network interface in Azure can have a set of IP configurations. When a current mirror member becomes primary, we'll use a [ZMIRROR](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GHA_mirror_set_config#GHA_mirror_set_tunable_params_zmirror_routine) callback to delete a VIP IP configuration on another mirror member's network interface and create a VIP IP configuration pointing at itself: 
 
