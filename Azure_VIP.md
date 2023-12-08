@@ -62,7 +62,8 @@ systemctl restart network
   "permissions": [
     {
       "actions": [
-        "Microsoft.Network/networkInterfaces/write"
+        "Microsoft.Network/networkInterfaces/write",
+        "Microsoft.Network/networkInterfaces/read"
       ],
       "notActions": [],
       "dataActions": [],
@@ -72,7 +73,7 @@ systemctl restart network
 }
 ```
 
-You might also need to grant `Microsoft.Network/networkInterfaces/read`. For non-production environments you might use a [Network Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#network-contributor) system role on the resource group, but that is not a recommended approach as Network Contributor is a very broad role.
+For non-production environments you might use a [Network Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#network-contributor) system role on the resource group, but that is not a recommended approach as Network Contributor is a very broad role.
 
 6. Each network interface in Azure can have a set of IP configurations. When a current mirror member becomes primary, we'll use a [ZMIRROR](https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GHA_mirror_set_config#GHA_mirror_set_tunable_params_zmirror_routine) callback to delete a VIP IP configuration on another mirror member's network interface and create a VIP IP configuration pointing at itself: 
 
