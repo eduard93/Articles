@@ -6,7 +6,7 @@ The main issue, when deploying to GCP, is that an IRIS VIP has a requirement of 
 
 To get HA, IRIS mirror members must be deployed to different availability zones in one subnet (which is possible in GCP as subnets always span the entire region). One of the solutions might be load balancers, but they, of course, cost extra, and you need to administrate them.
 
-In this article, I would like to provide a way to configure a Mirror VIP without the using Load Balancers suggested in most other [GCP reference architectures](https://community.intersystems.com/post/intersystems-iris-example-reference-architectures-google-cloud-platform-gcp). 
+In this article, I would like to provide a way to configure a Mirror VIP without using Load Balancers suggested in most other [GCP reference architectures](https://community.intersystems.com/post/intersystems-iris-example-reference-architectures-google-cloud-platform-gcp). 
 
 # Architecture
 
